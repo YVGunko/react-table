@@ -11,7 +11,7 @@ const CustomerCrud = ({ load, customers }) => {
   const [phone, setPhone] = useState("");
 
   /* beging handlers */
-  async function save(event) {
+  async function create(event) {
     event.preventDefault();
     await api.post("/create", {
       name: name,
@@ -33,10 +33,11 @@ const CustomerCrud = ({ load, customers }) => {
     setId(customers.id);
   }
 
-  async function deleteEmployee(id) {
-    await api.delete("/delete/" + id);
-    alert("Publisher Details Deleted Successfully");
-    load();
+  async function search(customers) {
+    setName(customers.name);
+    setEmail(customers.email);
+    setPhone(customers.phone);
+    setId(customers.id);
   }
 
   async function newOrder(id) {
@@ -51,23 +52,6 @@ const CustomerCrud = ({ load, customers }) => {
     load();
   }
 
-  async function update(event) {
-    event.preventDefault();
-    if (!id) return alert("Publisher Details No Found");
-    await api.put("/update", {
-      id: id,
-      name: name,
-      email: email,
-      phone: phone,
-    });
-    alert("Publisher Details Updated");
-    // reset state
-    setId("");
-    setName("");
-    setEmail("");
-    setPhone("");
-    load();
-  }
   /* end handlers */
 
 /* jsx */
@@ -92,18 +76,17 @@ const CustomerCrud = ({ load, customers }) => {
         </div>
 
         <div>
-          <button className="btn btn-primary m-4" onClick={save}>
+          <button className="btn btn-primary m-4" onClick={search}>
             Поиск
           </button>
-          <button className="btn btn-warning m-4" onClick={update}>
-            Update
+          <button className="btn btn-warning m-4" onClick={create}>
+            Создать
           </button>
         </div>
       </form>
       <CustomerList
         customers={customers}
         editEmployee={editEmployee}
-        deleteEmployee={deleteEmployee}
         newOrder={newOrder}
         listOrder={listOrder}
       />
