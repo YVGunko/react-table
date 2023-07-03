@@ -1,119 +1,82 @@
-import { useEffect,useState } from "react";
+import React from 'react';
 import api from "../http-common";
 //import { RouteComponentProps, withRouter } from 'react-router-dom';
 import CustomerList from "./CustomerList";
 
-const CustomerCrud = () => {
-/* state definition  */
-  const [customers, setCustomers] = useState([]);
-  const [id, setId] = useState("");
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [text, setText] = useState("");
-  
-  /* manage side effects */
-  useEffect(() => {
-    (async () => await load())();
-  }, []);
+const applyUpdateResult = (result) => (prevState) => ({
+  customers: [...prevState.customers, ...result.customers],
+  page: result.page,
+});
+const applySetResult = (result) => (prevState) => ({
+  customers: result.customers,
+  page: result.page,
+});
+const getTitleUrl = (value, page) => {
+  if (value) {
+    return `http://localhost:4232/api/customers?title=${value}&page=${page}&size=10`;
+  } else {
+    return `http://localhost:4232/api/customers?page=${page}&size=10`;
+  }
+}
 
-  async function load(text) {
-    var path = '/customers' + ((text) ? "?title=${text}" : "");
-    const result = await api.get(path);
-    setCustomers(result.data);
+class CustomerCrud extends React.Component  {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      customers: [],
+      page: null,
+    };
   }
-  /* beging handlers */
-  async function save(event) {
-    event.preventDefault();
-    await api.post("/create", {
-      name: name,
-      email: email,
-      phone: phone,
-    });
-    alert("Информация о клиенте сохранена");
-    // reset state
-    setId("");
-    setName("");
-    setEmail("");
-    setPhone("");
-    load();
-  }
-  async function editEmployee(customers) {
-    setName(customers.name);
-    setEmail(customers.email);
-    setPhone(customers.phone);
-    setId(customers.id);
+  onInitialSearch = (e) => {
+    e.preventDefault();
+
+    const { value } = this.input;
+
+    if (value === '') {
+      return;
+    }
+
+    this.fetchCustomers(value, 0);
   }
 
-  async function deleteEmployee(id) {
-    await api.delete("/delete/" + id);
-    alert("Publisher Details Deleted Successfully");
-    load();
-  }
+  fetchCustomers = (value, page) =>
+    fetch(getTitleUrl(value, page, 
+      { method: 'GET', headers: {
+        "Authorization": 'Basic ' + btoa("user:df542b7c-ae39-4120-bb8f-97271ecbd2cb"),
+        "Content-type": "application/json"
+      }}), )
+      .then(response => response.json())
+      .then(result => this.onSetResult(result, page));
 
-  async function newOrder(id) {
-    await api.post("/newOrder/" + id);
-    alert("newOrder");
-    load();
-  }
+  onSetResult = (result, page) =>
+    page === 0
+      ? this.setState(applySetResult(result))
+      : this.setState(applyUpdateResult(result));
 
-  async function listOrder(id) {
-    await api.get("/listOrder/" + id);
-    alert("listOrder");
-    load();
-  }
-
-  async function update(event) {
-    event.preventDefault();
-    if (!id) return alert("Publisher Details No Found");
-    await api.put("/update", {
-      id: id,
-      name: name,
-      email: email,
-      phone: phone,
-    });
-    alert("Publisher Details Updated");
-    // reset state
-    setId("");
-    setName("");
-    setEmail("");
-    setPhone("");
-    load();
-  }
-  /* end handlers */
-
-/* jsx */
-  return (
-    <div className="container mt-4">
-      <form>
-        <div className="form-group my-2">
-          <label>Поиск по наименованию</label>
-          <input
-            type="text"
-            className="form-control"
-            value={text}
-            onChange={e => setText(e.target.value)}
-          />
+  render() {
+    return (
+      <div className="page">
+        <div className="interactions">
+          <form type="submit" onSubmit={this.onInitialSearch}>
+            <input type="text" ref={node => this.input = node} />
+            <button type="submit">Search</button>
+          </form>
         </div>
 
-        <div>
-          <button className="btn btn-primary m-4" onClick={search}>
-            Поиск
-          </button>
-          <button className="btn btn-warning m-4" onClick={update}>
-            Update
-          </button>
-        </div>
-      </form>
-      <CustomerList
-        customers={customers}
-        editEmployee={editEmployee}
-        deleteEmployee={deleteEmployee}
-        newOrder={newOrder}
-        listOrder={listOrder}
-      />
-    </div>
-  );
+        <List
+          list={this.state.customers}
+        />
+      </div>
+    );
+  }
+
 };
+const List = ({ list }) =>
+  <div className="list">
+    {list.map(item => <div className="list-row" key={item.id}>
+      <h3 >{item.title}</h3>
+    </div>)}
+  </div>
 
 export default CustomerCrud;
