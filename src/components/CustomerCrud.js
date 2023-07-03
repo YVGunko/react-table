@@ -1,15 +1,27 @@
-import { useState } from "react";
+import { useEffect,useState } from "react";
 import api from "../http-common";
-import { RouteComponentProps, withRouter } from 'react-router-dom';
+//import { RouteComponentProps, withRouter } from 'react-router-dom';
 import CustomerList from "./CustomerList";
 
-const CustomerCrud = ({ load, customers }) => {
+const CustomerCrud = () => {
 /* state definition  */
+  const [customers, setCustomers] = useState([]);
   const [id, setId] = useState("");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
+  const [text, setText] = useState("");
+  
+  /* manage side effects */
+  useEffect(() => {
+    (async () => await load())();
+  }, []);
 
+  async function load(text) {
+    var path = '/customers' + ((text) ? "?title=${text}" : "");
+    const result = await api.get(path);
+    setCustomers(result.data);
+  }
   /* beging handlers */
   async function save(event) {
     event.preventDefault();
@@ -75,24 +87,17 @@ const CustomerCrud = ({ load, customers }) => {
     <div className="container mt-4">
       <form>
         <div className="form-group my-2">
+          <label>Поиск по наименованию</label>
           <input
             type="text"
             className="form-control"
-            hidden
-            value={id}
-            onChange={e => setId(e.target.value)}
-          />
-          <label>Наименование</label>
-          <input
-            type="text"
-            className="form-control"
-            value={name}
-            onChange={e => setName(e.target.value)}
+            value={text}
+            onChange={e => setText(e.target.value)}
           />
         </div>
 
         <div>
-          <button className="btn btn-primary m-4" onClick={save}>
+          <button className="btn btn-primary m-4" onClick={search}>
             Поиск
           </button>
           <button className="btn btn-warning m-4" onClick={update}>
