@@ -1,32 +1,42 @@
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useState } from "react";
+import api from "./http-common";
+import "bootstrap/dist/css/bootstrap.min.css";
+//import CustomerCrud from "./components/CustomerCrud";
+import Customers from "./components/Customers";
 
-const App = () => {
-  const [users, setUsers] = useState([])
+function App() {
+// set state
+  const [customers, setCustomers] = useState([]);
 
-  let headers = new Headers();
-  headers.append('Authorization', 'Basic ' + btoa("user:ad50c8e9-14cf-4c7e-87d0-f02331192c37"));
-  
-  console.log(headers);
-
-  const fetchUserData = () => {
-    fetch("http://localhost:4232/api/customers", { method:'GET', headers: headers })
-      .then(response => {
-        return response.json()
-      })
-      .then(data => {
-        setUsers(data)
-      })
-  }
-  
+  /* manage side effects */
   useEffect(() => {
-    fetchUserData()
-  }, [fetchUserData])
+    (async () => await load())();
+  }, []);
+
+  async function load() {
+    const result = await api.get("/customers");
+    setCustomers(result.data);
+  }
+
+// update customers on page after edit
+  function onUpdateCustomer(updatedCustomer) {
+    const updatedCustomers = customers.map(
+      customer => {
+        if (customer.id === updatedCustomer.id) {
+          return updatedCustomer
+        } else {return customer}
+      }
+    )
+    setCustomers(updatedCustomers)
+  }
 
   return (
     <div>
-      Test sdfsdf dfghf hgdf
+      <Customers
+        customers={customers}
+        onUpdateCustomer={onUpdateCustomer}
+      />
     </div>
   );
 }
-
 export default App;
