@@ -17,13 +17,13 @@ const CustomerCrud = () => {
     (async () => await load())();
   }, []);
 
-  async function load(text) {
-    var path = '/customers' + ((text) ? "?title=${text}" : "");
+  async function load(text, page) {
+    var path = '/customers' + ((text) ? "?title=${text}&page=${page}" : "?page=${page}");
     const result = await api.get(path);
     setCustomers(result.data);
   }
   /* beging handlers */
-  async function save(event) {
+  async function search(event) {
     event.preventDefault();
     await api.post("/create", {
       name: name,

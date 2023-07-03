@@ -1,10 +1,10 @@
 import axios from "axios";
 
 export default axios.create({
-  baseURL: "http://localhost:4232/api",
+  baseURL: "http://localhost:4232/api/v1",
 
   headers: {
     "Content-type": "application/json",
-    "Authorization": 'Basic ' + btoa("user:ad305978-c20c-45f8-87ae-62a521b0907e")
+    "Authorization": 'Basic ' + btoa("user:6651062b-b53f-4d96-a894-c9c5c45db015")
   }
 });
