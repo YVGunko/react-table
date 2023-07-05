@@ -1,11 +1,17 @@
 import { useEffect, useState, useCallback, useRef } from "react";
+import 'bootstrap/dist/css/bootstrap.min.css';
+import {Modal, Button} from 'react-bootstrap';
 import api from "../http-common";
 import axios from 'axios';
 //import { RouteComponentProps, withRouter } from 'react-router-dom';
 import CustomerList from "./CustomerList";
+import CustomerModal from "./CustomerModal";
 
 const CustomerCrud = () => {
 /* state definition  */
+  const [showCustomerModal, setShowCustomerModal] = useState(false);
+  const toggleShowCustomerModal = () => setShowCustomerModal(p => !p);
+
   const [customers, setCustomers] = useState([]);
   const [totalItems, setTotalItems] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
@@ -14,10 +20,22 @@ const CustomerCrud = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
-  const [textToSearchFor, setToSearchFor] = useState("");
+  const [textToSearchFor, setTextToSearchFor] = useState("");
   const [page, setPage] = useState(0);
+  const getTitleUrl = useCallback(() => {
+    //if (!!(page)) page = 0;
+    if (textToSearchFor) {
+      console.log(`getTitleUrl, /customers?title=${textToSearchFor}&page=${page}&size=10`);
+      return `/customers?title=${textToSearchFor}&page=${page}&size=10`;
+    } else {
+      console.log(`getTitleUrl, /customers?page=${page}&size=10`);
+      return `/customers?page=${page}&size=10`;
+    }
+  }, [textToSearchFor, page]);
+
 
   function usePrevious(value) {
+    console.log(`usePrevious ${value} `);
     const ref = useRef();
     useEffect(() => {
       ref.current = value; //assign the value of ref to the argument
@@ -25,54 +43,39 @@ const CustomerCrud = () => {
     return ref.current; //in the end, return the current ref value.
   };
   const prevTextToSearchFor = usePrevious(textToSearchFor);
+  //const prevPage = usePrevious(page);
+  
 
   const fetchData = useCallback(async () => {
-    console.log(`fetchData texts : ${prevTextToSearchFor}, ${textToSearchFor}`);
-    
-    let pageForRequest = 0;
-    if (prevTextToSearchFor === textToSearchFor) pageForRequest = page;
-
-    console.log(`fetchData pageForRequest=${pageForRequest}, page= ${page}`);
-    const result = await api.get(getTitleUrl (textToSearchFor, pageForRequest) );
+    console.log(`fetchData ${getTitleUrl()}`);
+    const result = await api.get(getTitleUrl());
     setTotalItems(result.data.totalItems);
     setTotalPages(result.data.totalPages);
     setCurrentPage(result.data.currentPage);
-    setPage(result.data.currentPage);
+    //setPage(result.data.currentPage);
     setCustomers(result.data.customers);
-    /*page === 0
-      ? setCustomers(result.data.customers)
-      : setCustomers(...customers, ...result.data.customers);*/
 
-  }, [textToSearchFor, page]);
+  }, [getTitleUrl]);
 
+  /* manage side effects */
   useEffect(() => {
+    //setPage(1);
+    console.log(`fetchData page=${page}`);
     fetchData();
   }, [fetchData]);
 
-  const getTitleUrl = (value, page) => {
-    //if (!!(page)) page = 0;
-    if (value) {
-      console.log(`getTitleUrl, /customers?title=${value}&page=${page}&size=10`);
-      return `/customers?title=${value}&page=${page}&size=10`;
-    } else {
-      console.log(`getTitleUrl, /customers?&page=${page}&size=10`);
-      return `/customers?page=${page}&size=10`;
-    }
-  }
 
-  /* manage side effects */
-  /*useEffect(() => {
-    (async () => await load(text, page))();
-    console.log(`useEffect, text=${text}, page=${page}`);
-  }, [text, page]);*/
+
+  
 
   async function load(textToSearchFor, page) {
     const result = await api.get( getTitleUrl (textToSearchFor, page) );
     setCustomers(result.data);
     console.log(`load page=${page}`);
   }
+
   /* beging handlers */
-  async function save(event) {
+  async function handleAdd(event) {
     event.preventDefault();
     await api.post("/create", {
       name: name,
@@ -135,7 +138,18 @@ const CustomerCrud = () => {
     setPage(page+parseInt(event.target.value, 10));
     event.preventDefault();
   }
+  const textToSearchForChange =(event) => {
+    console.log(`event.target.value is set to = ${event.target.value}`);
+    setTextToSearchFor(event.target.value);
+    console.log(`textToSearchFor is set to = ${textToSearchFor}, prevTextToSearchFor was = ${prevTextToSearchFor}`);
 
+    if (prevTextToSearchFor !== event.target.value) {
+      setPage(0);
+      console.log(`prevTextToSearchFor !== textToSearchFor -> nextPage would be = ${page}`);
+    }
+
+    event.preventDefault();
+  }
   /* end handlers */
 
 /* jsx */
@@ -148,20 +162,22 @@ const CustomerCrud = () => {
             type="text"
             className="form-control"
             value={textToSearchFor}
-            onChange={e => setToSearchFor(e.target.value)}
+            //onChange={e => setToSearchFor(e.target.value)}
+            onChange={textToSearchForChange}
           />
         </div>
 
         <div>
           <button disabled={page === 0} className="btn btn-primary m-4" value={-1} onClick={nextPage}>
-            Prev
+          {page}
           </button>
-          <button disabled={page === totalPages} className="btn btn-primary m-4" value={1} onClick={nextPage}>
-            Next
+          <button disabled={page === parseInt(totalPages-1, 10)} className="btn btn-primary m-4" value={1} onClick={nextPage}>
+          {totalPages}
           </button>
-          <button className="btn btn-warning m-4" onClick={update}>
-            Update
+          <button className="btn btn-warning m-4" onClick={toggleShowCustomerModal}>
+            Добавить клиента
           </button>
+          <CustomerModal message="hei you" show={showCustomerModal} toggleShow={toggleShowCustomerModal} header="info" />
         </div>
       </form>
       <CustomerList
