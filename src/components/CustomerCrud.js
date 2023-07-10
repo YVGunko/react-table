@@ -7,12 +7,27 @@ import axios from 'axios';
 import CustomerList from "./CustomerList";
 import CustomerModal from "./CustomerModal";
 
+
 const CustomerCrud = () => {
 /* state definition  */
   const [showCustomerModal, setShowCustomerModal] = useState(false);
-  const toggleShowCustomerModal = () => setShowCustomerModal(p => !p);
+  //const toggleShowCustomerModal = () => setShowCustomerModal(p => !p);
+  const handleShowCustomerModal = (e) => {
+    if (e.preventDefault) e.preventDefault();
+    console.log(`handleShowCustomerModal = ${showCustomerModal}`);
+    setShowCustomerModal(showCustomerModal => !showCustomerModal);
+
+  }
 
   const [customers, setCustomers] = useState([]);
+
+  const [customer, setCustomer ] = useState({
+    name: '',
+    phone: '',
+    email: '',
+    id: ''
+  });
+
   const [totalItems, setTotalItems] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [currentPage, setCurrentPage] = useState(0);
@@ -64,10 +79,6 @@ const CustomerCrud = () => {
     fetchData();
   }, [fetchData]);
 
-
-
-  
-
   async function load(textToSearchFor, page) {
     const result = await api.get( getTitleUrl (textToSearchFor, page) );
     setCustomers(result.data);
@@ -75,21 +86,24 @@ const CustomerCrud = () => {
   }
 
   /* beging handlers */
-  async function handleAdd(event) {
-    event.preventDefault();
-    await api.post("/create", {
+  const handleAddCustomer = event => {
+    if (event.preventDefault) event.preventDefault();
+    console.log(customer);
+    /*await api.post("/create", {
       name: name,
       email: email,
       phone: phone,
-    });
-    alert("Информация о клиенте сохранена");
-    // reset state
-    setId("");
-    setName("");
-    setEmail("");
-    setPhone("");
-    load();
+    });*/
   }
+
+  const handleChangeCustomer = event => {
+    const target = event.currentTarget;
+    console.log(`handleChangeCustomer`);
+    setCustomer({
+      ...customer, 
+        [target.name]: target.value});
+  }
+
   async function editEmployee(customers) {
     setName(customers.name);
     setEmail(customers.email);
@@ -174,10 +188,18 @@ const CustomerCrud = () => {
           <button disabled={page === parseInt(totalPages-1, 10)} className="btn btn-primary m-4" value={1} onClick={nextPage}>
           {totalPages}
           </button>
-          <button className="btn btn-warning m-4" onClick={toggleShowCustomerModal}>
+          <button className="btn btn-warning m-4" onClick={handleShowCustomerModal}>
             Добавить клиента
-          </button>
-          <CustomerModal message="hei you" show={showCustomerModal} toggleShow={toggleShowCustomerModal} header="info" />
+          </button>{
+
+
+          <CustomerModal 
+            customer={setCustomer({...customer, [name]: prevTextToSearchFor})} 
+            setCustomer={setCustomer} 
+            show={showCustomerModal} 
+            setShow={setShowCustomerModal} 
+            header="Клиент" />}
+          
         </div>
       </form>
       <CustomerList
