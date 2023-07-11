@@ -21,12 +21,7 @@ const CustomerCrud = () => {
 
   const [customers, setCustomers] = useState([]);
 
-  const [customer, setCustomer ] = useState({
-    name: '',
-    phone: '',
-    email: '',
-    id: ''
-  });
+
 
   const [totalItems, setTotalItems] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
@@ -86,14 +81,14 @@ const CustomerCrud = () => {
   }
 
   /* beging handlers */
-  const handleAddCustomer = event => {
+  /*const handleAddCustomer = event => {
     if (event.preventDefault) event.preventDefault();
     console.log(customer);
-    /*await api.post("/create", {
+    await api.post("/create", {
       name: name,
       email: email,
       phone: phone,
-    });*/
+    });
   }
 
   const handleChangeCustomer = event => {
@@ -102,7 +97,7 @@ const CustomerCrud = () => {
     setCustomer({
       ...customer, 
         [target.name]: target.value});
-  }
+  }*/
 
   async function editEmployee(customers) {
     setName(customers.name);
@@ -194,8 +189,8 @@ const CustomerCrud = () => {
 
 
           <CustomerModal 
-            customer={setCustomer({...customer, [name]: prevTextToSearchFor})} 
-            setCustomer={setCustomer} 
+            //customer={setCustomer({...customer, [name]: "textToSearchFor"})} 
+            //setCustomer={setCustomer} 
             show={showCustomerModal} 
             setShow={setShowCustomerModal} 
             header="Клиент" />}
