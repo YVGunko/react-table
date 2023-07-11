@@ -1,9 +1,7 @@
 import { useEffect, useState, useCallback, useRef } from "react";
 import 'bootstrap/dist/css/bootstrap.min.css';
-import {Modal, Button} from 'react-bootstrap';
+import { PersonAdd } from 'react-icons/fa';
 import api from "../http-common";
-import axios from 'axios';
-//import { RouteComponentProps, withRouter } from 'react-router-dom';
 import CustomerList from "./CustomerList";
 import CustomerModal from "./CustomerModal";
 
@@ -20,9 +18,6 @@ const CustomerCrud = () => {
   }
 
   const [customers, setCustomers] = useState([]);
-
-
-
   const [totalItems, setTotalItems] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [currentPage, setCurrentPage] = useState(0);
@@ -32,6 +27,14 @@ const CustomerCrud = () => {
   const [phone, setPhone] = useState("");
   const [textToSearchFor, setTextToSearchFor] = useState("");
   const [page, setPage] = useState(0);
+
+  const [customer, setCustomer ] = useState({
+    name: '',
+    phone: '',
+    email: '',
+    id: '',
+  }, [textToSearchFor]);
+
   const getTitleUrl = useCallback(() => {
     //if (!!(page)) page = 0;
     if (textToSearchFor) {
@@ -45,6 +48,7 @@ const CustomerCrud = () => {
 
 
   function usePrevious(value) {
+    console.log(`usePrevious. wanted to print customer.name: ${customer.name} `);
     console.log(`usePrevious ${value} `);
     const ref = useRef();
     useEffect(() => {
@@ -81,23 +85,19 @@ const CustomerCrud = () => {
   }
 
   /* beging handlers */
-  /*const handleAddCustomer = event => {
+  /* newOrder */
+  const handleNewOrder = event => {
     if (event.preventDefault) event.preventDefault();
-    console.log(customer);
-    await api.post("/create", {
-      name: name,
-      email: email,
-      phone: phone,
-    });
+    console.log('handleNewOrder');
+    newOrder();
+    //close CustomerModal
+    //open NewOrderModal
   }
-
-  const handleChangeCustomer = event => {
-    const target = event.currentTarget;
-    console.log(`handleChangeCustomer`);
-    setCustomer({
-      ...customer, 
-        [target.name]: target.value});
-  }*/
+  async function newOrder() {
+    await api.post("/customers/newOrder/" + customer.id);
+    console.log(`newOrder for customer.id=${customer.id}`);
+  }
+  /* newOrder end */
 
   async function editEmployee(customers) {
     setName(customers.name);
@@ -112,11 +112,7 @@ const CustomerCrud = () => {
     load();
   }
 
-  async function newOrder(id) {
-    await api.post("/newOrder/" + id);
-    alert("newOrder");
-    load();
-  }
+
 
   async function listOrder(id) {
     await api.get("/listOrder/" + id);
@@ -159,6 +155,38 @@ const CustomerCrud = () => {
 
     event.preventDefault();
   }
+
+  async function handleSubmitCustomer ( event ) {
+    console.log("SUBMITTED! ", customer);
+
+    if (event.preventDefault) event.preventDefault();
+     await api.post("/customers", 
+     JSON.stringify({
+         id:"new",
+         name: customer.name,
+         email: customer.email,
+         phone: customer.phone,
+    }) ).then((resp) => {
+     console.log("response :- ",resp);
+     setCustomer({
+         ...customer, 
+           id: resp.data.id,
+           name: resp.data.name,
+           email: resp.data.email,
+           phone: resp.data.phone});
+           console.log(`handleSubmitCustomer: id=${customer.id}, name=${customer.name}, phone=${customer.phone}`);
+   })
+   .catch((error) => {
+     alert(error);
+   });
+}
+const handleChangeCustomer = event => {
+  const target = event.currentTarget;
+  console.log(`handleChangeCustomer: id=${customer.id}, name=${customer.name}, phone=${customer.phone}`);
+  setCustomer({
+    ...customer, 
+      [target.name]: target.value});
+}
   /* end handlers */
 
 /* jsx */
@@ -189,11 +217,13 @@ const CustomerCrud = () => {
 
 
           <CustomerModal 
-            //customer={setCustomer({...customer, [name]: "textToSearchFor"})} 
-            //setCustomer={setCustomer} 
             show={showCustomerModal} 
             setShow={setShowCustomerModal} 
-            header="Клиент" />}
+            handleChangeCustomer={handleChangeCustomer}
+            handleSubmitCustomer={handleSubmitCustomer}
+            handleNewOrder={handleNewOrder}
+            header="Новый клиент" 
+            />}
           
         </div>
       </form>

@@ -1,7 +1,7 @@
 import React from "react";
 import CustomerEdit from "./CustomerEdit";
 
-const CustomerList = ({ customers, editEmployee, deleteEmployee, newOrder, listOrder }) => {
+const CustomerList = ({ customers, editEmployee, newOrder, listOrder }) => {
   return (
     <table className="table table-hover mt-3" align="center">
       <thead className="thead-light">
@@ -18,7 +18,6 @@ const CustomerList = ({ customers, editEmployee, deleteEmployee, newOrder, listO
           key={customer.id} 
           customer={customer}
           editEmployee={editEmployee}
-          deleteEmployee={deleteEmployee}
           newOrder={newOrder}
           listOrder={listOrder}
           />         
