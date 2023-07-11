@@ -1,7 +1,7 @@
 import React from "react";
 import CustomerEdit from "./CustomerEdit";
 
-const CustomerList = ({ customers, editEmployee, newOrder, listOrder }) => {
+const CustomerList = ({ customers, ...props }) => {
   return (
     <table className="table table-hover mt-3" align="center">
       <thead className="thead-light">
@@ -17,9 +17,7 @@ const CustomerList = ({ customers, editEmployee, newOrder, listOrder }) => {
           <CustomerEdit 
           key={customer.id} 
           customer={customer}
-          editEmployee={editEmployee}
-          newOrder={newOrder}
-          listOrder={listOrder}
+          {...props}
           />         
       ))}
       </tbody>

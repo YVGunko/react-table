@@ -1,21 +1,28 @@
 import React from 'react'
+import CustomerModal from "./CustomerModal";
 //import { PersonAdd } from '@material-ui/icons';
 
 // deconstructed props
-function CustomerEdit({customer, editEmployee, deleteEmployee, newOrder, listOrder}) {
+function CustomerEdit(props) {
+    const { customer, handleShowCustomerModal, deleteEmployee, handleNewOrder, show, setShow, 
+        handleChangeCustomer, handleSubmitCustomer, listOrder} = props;
   return (
         <tr key={customer.id}>
             <td>{customer.name}</td>
             <td>{customer.email}</td>
             <td>{customer.phone}</td>
             <td>
-                <button
-                  type="button"
-                  className="btn btn-warning"
-                  onClick={() => editEmployee(customer)}
-                >
-                  Edit
-                </button>
+            <button className="btn btn-warning m-4" onClick={handleShowCustomerModal}>
+             Редактировать
+            </button>{
+                <CustomerModal 
+                    show={show} 
+                    setShow={setShow} 
+                    handleChangeCustomer={handleChangeCustomer}
+                    handleSubmitCustomer={handleSubmitCustomer}
+                    handleNewOrder={handleNewOrder}
+                    header="Редактировать клиента" 
+                    />}
                 <button
                   type="button"
                   className="btn btn-danger mx-2"
@@ -26,9 +33,9 @@ function CustomerEdit({customer, editEmployee, deleteEmployee, newOrder, listOrd
                 <button
                   type="button"
                   className="btn btn-primary mx-2"
-                  onClick={() => newOrder(customer.id)}
+                  onClick={() => handleNewOrder(customer.id)}
                 >
-                  Добавить заказ
+                  Создать заказ
                 </button>
                 <button
                   type="button"

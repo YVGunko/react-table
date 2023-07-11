@@ -9,12 +9,11 @@ import CustomerModal from "./CustomerModal";
 const CustomerCrud = () => {
 /* state definition  */
   const [showCustomerModal, setShowCustomerModal] = useState(false);
-  //const toggleShowCustomerModal = () => setShowCustomerModal(p => !p);
+
   const handleShowCustomerModal = (e) => {
     if (e.preventDefault) e.preventDefault();
     console.log(`handleShowCustomerModal = ${showCustomerModal}`);
     setShowCustomerModal(showCustomerModal => !showCustomerModal);
-
   }
 
   const [customers, setCustomers] = useState([]);
@@ -85,26 +84,21 @@ const CustomerCrud = () => {
   }
 
   /* beging handlers */
-  /* newOrder */
+  /* newOrder 
   const handleNewOrder = event => {
     if (event.preventDefault) event.preventDefault();
     console.log('handleNewOrder');
     newOrder();
-    //close CustomerModal
+    //close CustomerModal if open
     //open NewOrderModal
-  }
-  async function newOrder() {
-    await api.post("/customers/newOrder/" + customer.id);
-    console.log(`newOrder for customer.id=${customer.id}`);
+  }*/
+  async function handleNewOrder(id) {
+    //if (event.preventDefault) event.preventDefault();
+    console.log(`newOrder for customer.id=${id}`);
+    await api.post("/customers/orders/" + id);
+
   }
   /* newOrder end */
-
-  async function editEmployee(customers) {
-    setName(customers.name);
-    setEmail(customers.email);
-    setPhone(customers.phone);
-    setId(customers.id);
-  }
 
   async function deleteEmployee(id) {
     await api.delete("/delete/" + id);
@@ -115,7 +109,7 @@ const CustomerCrud = () => {
 
 
   async function listOrder(id) {
-    await api.get("/listOrder/" + id);
+    await api.get("/customers/orders/" + id);
     alert("listOrder");
     load();
   }
@@ -187,6 +181,20 @@ const handleChangeCustomer = event => {
     ...customer, 
       [target.name]: target.value});
 }
+/*
+const callCustomerModal = () => {
+  return ({
+
+
+    <CustomerModal 
+      show={showCustomerModal} 
+      setShow={setShowCustomerModal} 
+      handleChangeCustomer={handleChangeCustomer}
+      handleSubmitCustomer={handleSubmitCustomer}
+      handleNewOrder={handleNewOrder}
+      header="Новый клиент" 
+      />});
+}*/
   /* end handlers */
 
 /* jsx */
@@ -229,10 +237,14 @@ const handleChangeCustomer = event => {
       </form>
       <CustomerList
         customers={customers}
-        editEmployee={editEmployee}
-        deleteEmployee={deleteEmployee}
-        newOrder={newOrder}
-        listOrder={listOrder}
+          editEmployee={handleShowCustomerModal}
+          deleteEmployee={deleteEmployee}
+          handleNewOrder={handleNewOrder}
+          show={showCustomerModal} 
+          setShow={setShowCustomerModal} 
+          handleChangeCustomer={handleChangeCustomer}
+          handleSubmitCustomer={handleSubmitCustomer}
+          listOrder={listOrder}
       />
     </div>
   );
