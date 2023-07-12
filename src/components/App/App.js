@@ -1,5 +1,5 @@
 import "bootstrap/dist/css/bootstrap.min.css";
-import CustomerCrud from "./components/CustomerCrud";
+import CustomerCrud from "../Customer/CustomerCrud";
 
 function App() {
   return (

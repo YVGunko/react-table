@@ -1,5 +1,5 @@
 import { useState } from "react";
-import api from "../http-common";
+import api from "../../http-common";
 import OrderList from "./OrderList";
 
 const OrderCrud = ({ load, customers }) => {

@@ -1,9 +1,10 @@
 import { useEffect, useState, useCallback, useRef } from "react";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { PersonAdd } from 'react-icons/fa';
-import api from "../http-common";
+import api from "../http-common/http-common";
 import CustomerList from "./CustomerList";
 import CustomerModal from "./CustomerModal";
+import CustomerEditButton from "./CustomerEditButton";
 
 
 const CustomerCrud = () => {
@@ -219,20 +220,8 @@ const callCustomerModal = () => {
           <button disabled={page === parseInt(totalPages-1, 10)} className="btn btn-primary m-4" value={1} onClick={nextPage}>
           {totalPages}
           </button>
-          <button className="btn btn-warning m-4" onClick={handleShowCustomerModal}>
-            Добавить клиента
-          </button>{
 
-
-          <CustomerModal 
-            show={showCustomerModal} 
-            setShow={setShowCustomerModal} 
-            handleChangeCustomer={handleChangeCustomer}
-            handleSubmitCustomer={handleSubmitCustomer}
-            handleNewOrder={handleNewOrder}
-            header="Новый клиент" 
-            />}
-          
+           <CustomerEditButton buttonCaption="New Customer" handleOnClick={handleShowCustomerModal}/>
         </div>
       </form>
       <CustomerList

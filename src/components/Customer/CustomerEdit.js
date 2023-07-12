@@ -12,7 +12,7 @@ function CustomerEdit(props) {
             <td>{customer.email}</td>
             <td>{customer.phone}</td>
             <td>
-            <button className="btn btn-warning m-4" onClick={handleShowCustomerModal}>
+{/*            <button className="btn btn-warning m-4" onClick={handleShowCustomerModal}>
              Редактировать
             </button>{
                 <CustomerModal 
@@ -22,7 +22,7 @@ function CustomerEdit(props) {
                     handleSubmitCustomer={handleSubmitCustomer}
                     handleNewOrder={handleNewOrder}
                     header="Редактировать клиента" 
-                    />}
+            />}*/}
                 <button
                   type="button"
                   className="btn btn-danger mx-2"
