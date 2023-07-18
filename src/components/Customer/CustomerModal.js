@@ -12,7 +12,7 @@ const CustomerModal = (props) => {
          <>            
             <Modal show={show} onHide={handleClose}>
                 <Modal.Header closeButton>
-                <Modal.Title>{header}</Modal.Title>
+                <Modal.Title>{submitting && "Сохраняю..." || header}</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <Form.Group >
@@ -24,7 +24,7 @@ const CustomerModal = (props) => {
                         <Form.Control type="email" value={customer.email || ''} onChange={handleChangeCustomer} name="email" placeholder="ivanov@ivan.ru"/>           
                     </Form.Group>
                 </Modal.Body>
-                <Modal.Footer>
+                <Modal.Footer disabled={submitting}>
                 <Button variant="secondary" onClick={handleClose}>
                     Закрыть
                 </Button>

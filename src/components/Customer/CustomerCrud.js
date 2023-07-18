@@ -27,6 +27,7 @@ const CustomerCrud = () => {
   const [phone, setPhone] = useState("");
   const [textToSearchFor, setTextToSearchFor] = useState("");
   const [page, setPage] = useState(0);
+  const [submitting, setSubmitting] = useState(false);
 
   const [customer, setCustomer ] = useState({
     name: '',
@@ -153,7 +154,7 @@ const CustomerCrud = () => {
 
   async function handleSubmitCustomer ( event ) {
     console.log("SUBMITTED! ", customer);
-
+    setSubmitting(true);
     if (event.preventDefault) event.preventDefault();
      await api.post("/customers", 
      JSON.stringify({
@@ -169,10 +170,12 @@ const CustomerCrud = () => {
            name: resp.data.name,
            email: resp.data.email,
            phone: resp.data.phone});
-           console.log(`handleSubmitCustomer: id=${customer.id}, name=${customer.name}, phone=${customer.phone}`);
+      setSubmitting(false);
+      //console.log(`handleSubmitCustomer: id=${customer.id}, name=${customer.name}, phone=${customer.phone}`);
    })
    .catch((error) => {
-     alert(error);
+      setSubmitting(false);
+      alert(error);
    });
 }
 const handleChangeCustomer = event => {
