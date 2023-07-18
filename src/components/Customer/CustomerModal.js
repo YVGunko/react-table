@@ -31,7 +31,7 @@ const CustomerModal = (props) => {
                 <Button variant="primary" onClick={handleSubmitCustomer}>
                     Сохранить
                 </Button>
-                <Button variant="primary" onClick={handleNewOrder}>
+                <Button variant="success" onClick={handleNewOrder}>
                     Создать заказ
                 </Button>
                 </Modal.Footer>
