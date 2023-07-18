@@ -17,11 +17,11 @@ const CustomerModal = (props) => {
                 <Modal.Body>
                     <Form.Group >
                         <Form.Label>Наименование: </Form.Label>
-                        <Form.Control type="text" onChange={handleChangeCustomer} name="name" placeholder="наименование..."/>           
+                        <Form.Control type="text" value={customer.name || ''} onChange={handleChangeCustomer} name="name" placeholder="наименование..."/>           
                         <Form.Label>phone: </Form.Label>
-                        <Form.Control type="phone" onChange={handleChangeCustomer} name="phone" placeholder="+7"/>
+                        <Form.Control type="phone" value={customer.phone || ''} onChange={handleChangeCustomer} name="phone" placeholder="+7"/>
                         <Form.Label>e-mail: </Form.Label>
-                        <Form.Control type="email" onChange={handleChangeCustomer} name="email" placeholder="ivanov@ivan.ru"/>           
+                        <Form.Control type="email" value={customer.email || ''} onChange={handleChangeCustomer} name="email" placeholder="ivanov@ivan.ru"/>           
                     </Form.Group>
                 </Modal.Body>
                 <Modal.Footer>
@@ -31,7 +31,7 @@ const CustomerModal = (props) => {
                 <Button variant="primary" onClick={handleSubmitCustomer}>
                     Сохранить
                 </Button>
-                <Button variant="primary" onClick={handleNewOrder}>
+                <Button disabled={customer.id === null} variant="primary" onClick={handleNewOrder}>
                     Создать заказ
                 </Button>
                 </Modal.Footer>
