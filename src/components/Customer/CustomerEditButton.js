@@ -1,15 +1,16 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { Button } from "react-bootstrap";
 
-export default function CustomerEditButton ({buttonCaption, handleOnClick}) {
+export default function CustomerEditButton ({caption, onClick}) {
     return (
-        <button className="btn btn-warning m-4" onClick={handleOnClick}>
-            {buttonCaption}
-          </button>
+        <Button variant="warning" onClick={onClick}>
+            {caption}
+          </Button>
     )
 }
 
 CustomerEditButton.propTypes = {
-    buttonCaption: PropTypes.string.isRequired,
-    handleOnClick: PropTypes.func.isRequired
+    caption: PropTypes.string.isRequired,
+    onClick: PropTypes.func.isRequired
 }

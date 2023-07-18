@@ -148,7 +148,7 @@ const CustomerCrud = () => {
       console.log(`prevTextToSearchFor !== textToSearchFor -> nextPage would be = ${page}`);
     }
 
-    event.preventDefault();
+    if (event.preventDefault) event.preventDefault();
   }
 
   async function handleSubmitCustomer ( event ) {
@@ -221,7 +221,7 @@ const callCustomerModal = () => {
           {totalPages}
           </button>
 
-           <CustomerEditButton buttonCaption="New Customer" handleOnClick={handleShowCustomerModal}/>
+           <CustomerEditButton caption="New Customer" onClick={handleShowCustomerModal}/>
         </div>
       </form>
       <CustomerList
