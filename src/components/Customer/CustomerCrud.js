@@ -1,14 +1,17 @@
-import { useEffect, useState, useCallback, useRef } from "react";
+import { useEffect, useState, useCallback, useRef, useContext, createContext } from "react";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { PersonAdd } from 'react-icons/fa';
 import api from "../http-common/http-common";
 import CustomerList from "./CustomerList";
 import CustomerModal from "./CustomerModal";
 import CustomerEditButton from "./CustomerEditButton";
+import TokenContext from '../Token/Token';
 
+export const CustomerCrudContext = createContext();
 
 const CustomerCrud = () => {
 /* state definition  */
+  const token = useContext(TokenContext);
   const [showCustomerModal, setShowCustomerModal] = useState(false);
 
   const handleShowCustomerModal = (e) => {
@@ -204,6 +207,9 @@ const callCustomerModal = () => {
 /* jsx */
   return (
     <div className="container mt-4">
+        <div>
+          Welcome, {token.name}
+        </div>
       <form>
         <div className="form-group my-2">
           <label>Поиск по наименованию</label>
