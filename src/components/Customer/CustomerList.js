@@ -1,5 +1,5 @@
 import React from "react";
-import CustomerEdit from "./CustomerEdit";
+import Customer from "./Customer";
 
 const CustomerList = ({ customers, ...props }) => {
   return (
@@ -14,7 +14,7 @@ const CustomerList = ({ customers, ...props }) => {
       </thead>
       <tbody>
       {customers.map(customer => (
-          <CustomerEdit 
+          <Customer 
           key={customer.id} 
           customer={customer}
           {...props}

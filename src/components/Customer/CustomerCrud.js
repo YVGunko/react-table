@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, useRef, useContext, createContext } from "react";
+import { useEffect, useState, useCallback, useRef, useContext } from "react";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { PersonAdd } from 'react-icons/fa';
 import api from "../http-common/http-common";
@@ -6,8 +6,6 @@ import CustomerList from "./CustomerList";
 import CustomerModal from "./CustomerModal";
 import CustomerEditButton from "./CustomerEditButton";
 import TokenContext from '../Token/Token';
-
-export const CustomerCrudContext = createContext();
 
 const CustomerCrud = () => {
 /* state definition  */
@@ -24,16 +22,12 @@ const CustomerCrud = () => {
   const [totalItems, setTotalItems] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [currentPage, setCurrentPage] = useState(0);
-  const [id, setId] = useState("");
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
   const [textToSearchFor, setTextToSearchFor] = useState("");
   const [page, setPage] = useState(0);
   const [submitting, setSubmitting] = useState(false);
 
   const [customer, setCustomer ] = useState({
-    name: '',
+    name: textToSearchFor ? textToSearchFor : '',
     phone: '',
     email: '',
     id: '',
@@ -82,12 +76,6 @@ const CustomerCrud = () => {
     fetchData();
   }, [fetchData]);
 
-  async function load(textToSearchFor, page) {
-    const result = await api.get( getTitleUrl (textToSearchFor, page) );
-    setCustomers(result.data);
-    console.log(`load page=${page}`);
-  }
-
   /* beging handlers */
   /* newOrder 
   const handleNewOrder = event => {
@@ -105,20 +93,6 @@ const CustomerCrud = () => {
   }
   /* newOrder end */
 
-  async function deleteEmployee(id) {
-    await api.delete("/delete/" + id);
-    alert("Publisher Details Deleted Successfully");
-    load();
-  }
-
-
-
-  async function listOrder(id) {
-    await api.get("/customers/orders/" + id);
-    alert("listOrder");
-    load();
-  }
-
   async function update(event) {
     event.preventDefault();
     if (!id) return alert("Publisher Details No Found");
@@ -128,13 +102,6 @@ const CustomerCrud = () => {
       email: email,
       phone: phone,
     });
-    alert("Publisher Details Updated");
-    // reset state
-    setId("");
-    setName("");
-    setEmail("");
-    setPhone("");
-    load();
   }
 
   const nextPage =(event) => {
@@ -236,13 +203,11 @@ const callCustomerModal = () => {
       <CustomerList
         customers={customers}
           editEmployee={handleShowCustomerModal}
-          deleteEmployee={deleteEmployee}
           handleNewOrder={handleNewOrder}
           show={showCustomerModal} 
           setShow={setShowCustomerModal} 
           handleChangeCustomer={handleChangeCustomer}
           handleSubmitCustomer={handleSubmitCustomer}
-          listOrder={listOrder}
       />
     </div>
   );
