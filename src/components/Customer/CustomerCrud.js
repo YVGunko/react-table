@@ -88,7 +88,22 @@ const CustomerCrud = () => {
   async function handleNewOrder(id) {
     //if (event.preventDefault) event.preventDefault();
     console.log(`newOrder for customer.id=${id}`);
-    await api.post("/customers/orders/" + id);
+    await api.post("/customers/orders/" + id)
+    .then((resp) => {
+      console.log("response :- ",resp);
+      setCustomer({
+          ...customer, 
+            id: resp.data.id,
+            name: resp.data.name,
+            email: resp.data.email,
+            phone: resp.data.phone});
+       setSubmitting(false);
+       //console.log(`handleSubmitCustomer: id=${customer.id}, name=${customer.name}, phone=${customer.phone}`);
+    })
+    .catch((error) => {
+       setSubmitting(false);
+       alert(error);
+    });
 
   }
   /* newOrder end */
@@ -155,11 +170,9 @@ const handleChangeCustomer = event => {
     ...customer, 
       [target.name]: target.value});
 }
-/*
+
 const callCustomerModal = () => {
-  return ({
-
-
+  return (
     <CustomerModal 
       show={showCustomerModal} 
       setShow={setShowCustomerModal} 
@@ -167,8 +180,9 @@ const callCustomerModal = () => {
       handleSubmitCustomer={handleSubmitCustomer}
       handleNewOrder={handleNewOrder}
       header="Новый клиент" 
-      />});
-}*/
+      submitting={submitting}
+      />);
+}
   /* end handlers */
 
 /* jsx */
@@ -196,8 +210,10 @@ const callCustomerModal = () => {
           <button disabled={page === parseInt(totalPages-1, 10)} className="btn btn-primary m-4" value={1} onClick={nextPage}>
           {totalPages}
           </button>
-
-           <CustomerEditButton caption="New Customer" onClick={handleShowCustomerModal}/>
+          <button className="btn btn-warning m-4" onClick={handleShowCustomerModal}>
+            Добавить клиента
+          </button>{callCustomerModal}
+          <CustomerEditButton caption="New Customer" onClick={handleShowCustomerModal}/>
         </div>
       </form>
       <CustomerList

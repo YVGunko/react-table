@@ -48,9 +48,9 @@ function CustomerEdit(props) {
                 <button
                   type="button"
                   className="btn btn-info mx-2"
-                  onClick={() => listOrder(customer.id)}
+                  onClick={() => listOrder(customer)}
                 >
-                  Список заказов
+                  Заказы клиента
                 </button>
               </td>
         </tr>

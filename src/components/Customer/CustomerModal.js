@@ -3,7 +3,7 @@ import { Modal, Button, Form } from "react-bootstrap";
 
 const CustomerModal = (props) => {
 
-    const { show, setShow, handleChangeCustomer, handleSubmitCustomer, handleNewOrder, header } = props;
+    const { show, setShow, handleChangeCustomer, handleSubmitCustomer, handleNewOrder, header, submitting } = props;
 
     const handleClose = () => setShow(false);  
 
