@@ -1,5 +1,6 @@
 import React from 'react'
 import CustomerModal from "./CustomerModal";
+import api from "../http-common/http-common";
 //import { PersonAdd } from '@material-ui/icons';
 
 async function listOrder(id) {
@@ -11,8 +12,8 @@ async function deleteCustomer(id) {
 }
 
 // deconstructed props
-function CustomerEdit(props) {
-    const { customer, handleShowCustomerModal, deleteEmployee, handleNewOrder, show, setShow, 
+function Customer(props) {
+    const { customer, handleShowCustomerModal, handleNewOrder, show, setShow, 
         handleChangeCustomer, handleSubmitCustomer} = props;
   return (
         <tr key={customer.id}>
@@ -34,7 +35,7 @@ function CustomerEdit(props) {
                 <button
                   type="button"
                   className="btn btn-danger mx-2"
-                  onClick={() => deleteEmployee(customer.id)}
+                  onClick={() => deleteCustomer(customer.id)}
                 >
                   Delete
                 </button>
@@ -57,4 +58,4 @@ function CustomerEdit(props) {
   )
 }
 
-export default CustomerEdit;
+export default Customer;

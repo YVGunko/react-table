@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, useRef, useContext } from "react";
+import React, { useEffect, useState, useCallback, useRef, useContext } from "react";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { PersonAdd } from 'react-icons/fa';
 import api from "../http-common/http-common";
@@ -108,17 +108,6 @@ const CustomerCrud = () => {
   }
   /* newOrder end */
 
-  async function update(event) {
-    event.preventDefault();
-    if (!id) return alert("Publisher Details No Found");
-    await api.put("/update", {
-      id: id,
-      name: name,
-      email: email,
-      phone: phone,
-    });
-  }
-
   const nextPage =(event) => {
     console.log(`nextPage would be = ${page+parseInt(event.target.value, 10)}`);
     setPage(page+parseInt(event.target.value, 10));
@@ -176,6 +165,7 @@ const callCustomerModal = () => {
     <CustomerModal 
       show={showCustomerModal} 
       setShow={setShowCustomerModal} 
+      customer={customer} 
       handleChangeCustomer={handleChangeCustomer}
       handleSubmitCustomer={handleSubmitCustomer}
       handleNewOrder={handleNewOrder}

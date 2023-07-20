@@ -3,7 +3,7 @@ import { Modal, Button, Form } from "react-bootstrap";
 
 const CustomerModal = (props) => {
 
-    const { show, setShow, handleChangeCustomer, handleSubmitCustomer, handleNewOrder, header, submitting } = props;
+    const { show, setShow, customer, handleChangeCustomer, handleSubmitCustomer, handleNewOrder, header, submitting } = props;
 
     const handleClose = () => setShow(false);  
 
@@ -12,7 +12,8 @@ const CustomerModal = (props) => {
          <>            
             <Modal show={show} onHide={handleClose}>
                 <Modal.Header closeButton>
-                <Modal.Title>{submitting && "Сохраняю..." || header}</Modal.Title>
+                {submitting && <Modal.Title>"Сохраняю..."</Modal.Title>}
+                {!submitting && <Modal.Title>{header}</Modal.Title>}
                 </Modal.Header>
                 <Modal.Body>
                     <Form.Group >
