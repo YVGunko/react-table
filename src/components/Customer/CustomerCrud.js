@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback, useRef, useContext } from "react";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { PersonAdd } from 'react-icons/fa';
-import api from "../http-common/http-common";
+import { api } from "../http-common/http-common";
 import CustomerList from "./CustomerList";
 import CustomerModal from "./CustomerModal";
 import CustomerEditButton from "./CustomerEditButton";

@@ -1,18 +1,19 @@
-import React, { useState } from 'react';
+import React from 'react';
 import "bootstrap/dist/css/bootstrap.min.css";
 import CustomerCrud from "../Customer/CustomerCrud";
 import Login from '../Login/Login';
 import TokenContext from '../Token/Token';
 import useToken from '../Token/useToken';
-import GetCredentials from '../Token/GetCredentials';
+//import GetCredentials from '../Token/GetCredentials';
 
 function App() {
-  /*const { token, setToken } = useToken();
+  const { token, setToken } = useToken();
+  console.log(`App, token=${token}`);
   if(!token) {
     return <Login setToken={setToken} />
-  }*/
+  }
   return (
-    <TokenContext.Provider value={GetCredentials}>
+    <TokenContext.Provider value={token}>
       <div>
         <h1 className="text-center">Клиенты и заказы</h1>
         <CustomerCrud />

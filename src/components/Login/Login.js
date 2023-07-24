@@ -1,12 +1,16 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import './Login.css';
+import { api } from "../http-common/http-common";
 
 async function loginUser(credentials) {
+    console.log(`loginUser, credentials=${credentials.username}`);
+    console.log(`loginUser, body=${JSON.stringify(credentials)}`);
     return fetch('http://localhost:4232/api/login', {
-      method: 'GET',
+      method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        "Authorization": 'Basic ' + btoa(credentials.username+':'+credentials.password)
       },
       body: JSON.stringify(credentials)
     })
@@ -14,6 +18,7 @@ async function loginUser(credentials) {
    }
 
    export default function Login({ setToken }) {
+    console.log(`Login, start`);
     const [username, setUserName] = useState();
     const [password, setPassword] = useState();
   
@@ -24,6 +29,7 @@ async function loginUser(credentials) {
         username,
         password
       });
+      console.log(`Login, token=${token.id}`);
       setToken(token);
     }
   return(
