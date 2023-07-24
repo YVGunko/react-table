@@ -1,16 +1,7 @@
-import React, { useState } from 'react';
 import axios from "axios";
-import useToken from '../Token/useToken';
-import Login from '../Login/Login';
+import GetCredentials from '../Token/GetCredentials';
 
-const { token, setToken } = useToken();
-
-async function callLogin() {
-  
-  if(!token) {
-    return <Login setToken={setToken} />
-  }
- }
+const { credentials, setCredentials } = GetCredentials();
 
 export default axios.create({
   
@@ -18,6 +9,8 @@ export default axios.create({
 
   headers: {
     "Content-type": "application/json",
-    "Authorization": 'Basic ' + btoa(token)
+    "Authorization": 'Basic ' + btoa(GetCredentials)
   }
 });
+
+//"Authorization": 'Basic ' + btoa(credentials.name+':'+credentials.password)
