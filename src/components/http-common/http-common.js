@@ -1,7 +1,12 @@
 import axios from "axios";
-
-export default axios.create()({ 
-  baseURL: "http://localhost:4232/api",
+import { baseURL } from "./baseURL";
+const api = (credentials) =>axios.create()({ 
+  baseURL: baseURL,
+  headers: {
+    "Content-Type": "application/json",
+    "Authorization": 'Basic ' + btoa(credentials.name+':'+credentials.password)
+  }
 });
 
-//"Authorization": 'Basic ' + btoa(credentials.name+':'+credentials.password)
+export default api;
+//

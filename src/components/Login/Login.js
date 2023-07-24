@@ -2,11 +2,12 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import './Login.css';
 import { api } from "../http-common/http-common";
+import { baseURLogin } from "../http-common/baseURL";
 
 async function loginUser(credentials) {
     console.log(`loginUser, credentials=${credentials.username}`);
     console.log(`loginUser, body=${JSON.stringify(credentials)}`);
-    return fetch('http://localhost:4232/api/login', {
+    return fetch(baseURLogin, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

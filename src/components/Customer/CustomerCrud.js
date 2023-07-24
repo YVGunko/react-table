@@ -1,11 +1,13 @@
 import React, { useEffect, useState, useCallback, useRef, useContext } from "react";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { PersonAdd } from 'react-icons/fa';
-import { api } from "../http-common/http-common";
+import api from "../http-common/http-common";
 import CustomerList from "./CustomerList";
 import CustomerModal from "./CustomerModal";
 import CustomerEditButton from "./CustomerEditButton";
 import TokenContext from '../Token/Token';
+
+//const api = require("../http-common/http-common");
 
 const CustomerCrud = () => {
 /* state definition  */
@@ -60,12 +62,17 @@ const CustomerCrud = () => {
 
   const fetchData = useCallback(async () => {
     console.log(`fetchData ${getTitleUrl()}`);
-    const result = await api.get(getTitleUrl());
-    setTotalItems(result.data.totalItems);
-    setTotalPages(result.data.totalPages);
-    setCurrentPage(result.data.currentPage);
+    console.log(`fetchData, token.username= ${token.username}`);
+    api(token).get(getTitleUrl())
+    .then(result => {
+      setCustomers(result.data.customers);
+      setTotalItems(result.data.totalItems);
+      setTotalPages(result.data.totalPages);
+      setCurrentPage(result.data.currentPage);})
+    .catch(err => console.log(err))
+
     //setPage(result.data.currentPage);
-    setCustomers(result.data.customers);
+    
 
   }, [getTitleUrl]);
 
