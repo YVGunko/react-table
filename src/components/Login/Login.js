@@ -1,12 +1,10 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import './Login.css';
-import { api } from "../http-common/http-common";
 import { baseURLogin } from "../http-common/baseURL";
 
 async function loginUser(credentials) {
     console.log(`loginUser, credentials=${credentials.username}`);
-    console.log(`loginUser, body=${JSON.stringify(credentials)}`);
     return fetch(baseURLogin, {
       method: 'POST',
       headers: {

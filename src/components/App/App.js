@@ -4,12 +4,12 @@ import CustomerCrud from "../Customer/CustomerCrud";
 import Login from '../Login/Login';
 import TokenContext from '../Token/Token';
 import useToken from '../Token/useToken';
-//import GetCredentials from '../Token/GetCredentials';
+
 
 function App() {
   const { token, setToken } = useToken();
-  console.log(`App, token=${token}`);
   if(!token) {
+    console.log(`App, token isn't defined, exactly is =${token}`);
     return <Login setToken={setToken} />
   }
   return (

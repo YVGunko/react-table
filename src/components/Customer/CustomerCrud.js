@@ -6,6 +6,7 @@ import CustomerList from "./CustomerList";
 import CustomerModal from "./CustomerModal";
 import CustomerEditButton from "./CustomerEditButton";
 import TokenContext from '../Token/Token';
+import { baseURL } from "../http-common/baseURL";
 
 //const api = require("../http-common/http-common");
 
@@ -63,18 +64,34 @@ const CustomerCrud = () => {
   const fetchData = useCallback(async () => {
     console.log(`fetchData ${getTitleUrl()}`);
     console.log(`fetchData, token.username= ${token.username}`);
-    api(token).get(getTitleUrl())
+    /*api(token).get(getTitleUrl())
     .then(result => {
       setCustomers(result.data.customers);
       setTotalItems(result.data.totalItems);
       setTotalPages(result.data.totalPages);
       setCurrentPage(result.data.currentPage);})
-    .catch(err => console.log(err))
+    .catch(err => console.log(err))*/
 
     //setPage(result.data.currentPage);
     
+    return fetch(baseURL+getTitleUrl(), {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        "Authorization": 'Basic ' + btoa(token.username+':'+token.password)
+      }
+    })
+    .then(response => {
+      return response.json()
+    })
+    .then(data => {
+      setCustomers(data.customers);
+      setTotalItems(data.totalItems);
+      setTotalPages(data.totalPages);
+      setCurrentPage(data.currentPage);
+    })
 
-  }, [getTitleUrl]);
+  }, [getTitleUrl,token]);
 
   /* manage side effects */
   useEffect(() => {
@@ -186,7 +203,7 @@ const callCustomerModal = () => {
   return (
     <div className="container mt-4">
         <div>
-          Welcome, {token.name}
+          Добро пожаловать, {token.username}
         </div>
       <form>
         <div className="form-group my-2">
