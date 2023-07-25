@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import './Login.css';
-import { baseURLogin } from "../http-common/baseURL";
 import api  from "../http-common/http-common";
 
 /*async function loginUser(credentials) {
