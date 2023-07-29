@@ -17,7 +17,7 @@ import api  from "../http-common/http-common";
    }*/
 
    async function loginUser(credentials) {
-    console.log(`loginUser, credentials=${credentials.username}`);
+    console.log(`loginUser, credentials=${credentials?.password}`);
     return api('/login', 'POST', credentials, credentials);
    }
 
@@ -47,7 +47,8 @@ import api  from "../http-common/http-common";
             status : token?.status
           });
         }else{
-          console.log(`Login, token=${token}`);
+          token.password = password;
+          console.log(`Login, token=${token?.password}`);
           setToken(token);
         }
       }
@@ -58,22 +59,22 @@ import api  from "../http-common/http-common";
       )
     } else {
       return(
-        <div class="p-4">
-        <div class="container">
-          <div class="row">
-            <div class="col-md-5 col-sm-6 col-lg-3 mx-auto">
-              <div class="formContainer">
-                <h2 class="p-2 text-center mb-4 h4" id="formHeading">Вход тут...</h2>
+        <div className="p-4">
+        <div className="container">
+          <div className="row">
+            <div className="col-md-5 col-sm-6 col-lg-3 mx-auto">
+              <div className="formContainer">
+                <h2 className="p-2 text-center mb-4 h4" id="formHeading">Вход тут...</h2>
                 <form onSubmit={handleSubmit}>
-                  <div class="form-group mt-3">
-                    <label class="mb-2" for="username">Имя пользователя </label>
-                    <input onChange={e => setUserName(e.target.value)} class="form-control" id="username" name="username" type="text" />
+                  <div className="form-group mt-3">
+                    <label className="mb-2" htmlFor="username">Имя пользователя </label>
+                    <input onChange={e => setUserName(e.target.value)} className="form-control" id="username" name="username" type="text" />
                   </div>
-                  <div class="form-group mt-3">
-                    <label class="mb-2" for="password">Пароль</label>
-                    <input  onChange={e => setPassword(e.target.value)} type="password" class="form-control" id="password" name="password" />
+                  <div className="form-group mt-3">
+                    <label className="mb-2" htmlFor="password">Пароль</label>
+                    <input  onChange={e => setPassword(e.target.value)} type="password" className="form-control" id="password" name="password" />
                   </div>
-                  <button type="submit" class="btn btn-success btn-lg w-100 mt-4">Войти</button>
+                  <button type="submit" className="btn btn-success btn-lg w-100 mt-4">Войти</button>
                 </form>
               </div>
             </div>

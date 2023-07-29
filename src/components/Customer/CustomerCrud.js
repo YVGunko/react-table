@@ -1,12 +1,12 @@
 import React, { useEffect, useState, useCallback, useRef, useContext } from "react";
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { PersonAdd } from 'react-icons/fa';
 import api from "../http-common/http-common";
 import CustomerList from "./CustomerList";
 import CustomerModal from "./CustomerModal";
 import CustomerEditButton from "./CustomerEditButton";
 import TokenContext from '../Token/Token';
 import { baseURL } from "../http-common/baseURL";
+import { encode } from "base-64";
 
 //const api = require("../http-common/http-common");
 
@@ -63,7 +63,7 @@ const CustomerCrud = () => {
 
   const fetchData = useCallback(async () => {
     console.log(`fetchData ${getTitleUrl()}`);
-    console.log(`fetchData, token.username= ${token.username}`);
+    console.log(`fetchData, token.btoa= ${btoa(token.username+':'+token.password)}`);
     /*api(token).get(getTitleUrl())
     .then(result => {
       setCustomers(result.data.customers);
@@ -78,7 +78,7 @@ const CustomerCrud = () => {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        "Authorization": 'Basic ' + btoa(token.username+':'+token.password)
+        "Authorization": 'Basic ' + encode(token.username+':'+token.password)
       }
     })
     .then(response => {
@@ -201,9 +201,10 @@ const callCustomerModal = () => {
 
 /* jsx */
   return (
+    <>
     <div className="container mt-4">
         <div>
-          Добро пожаловать, {token.username}
+          Добро пожаловать, {encode(token.username+':'+token.password)}
         </div>
       <form>
         <div className="form-group my-2">
@@ -228,6 +229,7 @@ const callCustomerModal = () => {
             Добавить клиента
           </button>{callCustomerModal}
           <CustomerEditButton caption="New Customer" onClick={handleShowCustomerModal}/>
+
         </div>
       </form>
       <CustomerList
@@ -240,6 +242,7 @@ const callCustomerModal = () => {
           handleSubmitCustomer={handleSubmitCustomer}
       />
     </div>
+    </>
   );
 };
 

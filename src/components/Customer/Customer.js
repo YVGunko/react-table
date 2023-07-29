@@ -1,7 +1,6 @@
 import React from 'react'
 import CustomerModal from "./CustomerModal";
 import  api  from "../http-common/http-common";
-//import { PersonAdd } from '@material-ui/icons';
 
 async function listOrder(id) {
   await api.get("/customers/orders/" + id);

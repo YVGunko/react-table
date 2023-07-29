@@ -11,7 +11,7 @@ export default function useToken() {
   const saveToken = userToken => {
     sessionStorage.setItem('token', JSON.stringify(userToken));
     setToken(userToken);
-    console.log(`saveToken, token.id=${userToken.id}`);
+    console.log(`saveToken, token.id=${userToken.password}`);
   };
   return {
     setToken: saveToken,
