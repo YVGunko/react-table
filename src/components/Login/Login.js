@@ -40,7 +40,6 @@ import api  from "../http-common/http-common";
       });
 
       if (token) {
-        console.log(`Login, token?=${token?.error}`);
         if (token.error) {
           console.log(`Login, token.error=${token?.error}`);
           setError({
@@ -49,7 +48,7 @@ import api  from "../http-common/http-common";
           });
         }else{
           token.password = password;
-          console.log(`Login, token=${token?.password}`);
+          //console.log(`Login, token=${token?.password}`);
           setToken(token);
         }
       }

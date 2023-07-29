@@ -65,18 +65,8 @@ const CustomerCrud = () => {
   
 
   const fetchData = useCallback(async () => {
-    console.log(`fetchData ${getTitleUrl()}`);
-    
-    return fetch(baseURL+getTitleUrl(), {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        "Authorization": 'Basic ' + encode(token.username+':'+token.password)
-      }
-    })
-    .then(response => {
-      return response.json()
-    })
+    console.log(`fetchData Url=${getTitleUrl()}`);
+    return api(getTitleUrl(), 'GET', token)
     .then(data => {
       setCustomers(data.customers);
       setTotalItems(data.totalItems);
@@ -86,10 +76,7 @@ const CustomerCrud = () => {
 
   }, [getTitleUrl,token]);
 
-  /* manage side effects */
   useEffect(() => {
-    //setPage(1);
-    console.log(`fetchData page=${page}`);
     fetchData();
   }, [fetchData]);
 
@@ -105,15 +92,16 @@ const CustomerCrud = () => {
   async function handleNewOrder(id) {
     //if (event.preventDefault) event.preventDefault();
     console.log(`newOrder for customer.id=${id}`);
-    await api.post("/customers/orders/" + id)
-    .then((resp) => {
-      console.log("response :- ",resp);
+    //await api.post(`/customers/orders/${id}`)
+    await api(`/customers/orders/${id}`, 'POST', token)
+    .then((data) => {
+      console.log("response :- ",data);
       setCustomer({
           ...customer, 
-            id: resp.data.id,
-            name: resp.data.name,
-            email: resp.data.email,
-            phone: resp.data.phone});
+            id: data.id,
+            name: data.name,
+            email: data.email,
+            phone: data.phone});
        setSubmitting(false);
        //console.log(`handleSubmitCustomer: id=${customer.id}, name=${customer.name}, phone=${customer.phone}`);
     })

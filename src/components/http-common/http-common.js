@@ -2,6 +2,9 @@ import { baseURL } from "./baseURL";
 // General api to acces data from web
 export default function api(path,method,credentials,params){
 
+  console.log(`General api path= ${path}`);
+  console.log(`General api credentials.password= ${credentials.password}`);
+
   let options;
       options = Object.assign({headers: {
           'Accept': 'application/json',
