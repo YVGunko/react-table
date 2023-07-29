@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useCallback, useRef, useContext } from "react";
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { Button, Col, Container, Form, Row } from "react-bootstrap";
 import api from "../http-common/http-common";
 import CustomerList from "./CustomerList";
 import CustomerModal from "./CustomerModal";
@@ -13,6 +14,8 @@ import { encode } from "base-64";
 const CustomerCrud = () => {
 /* state definition  */
   const token = useContext(TokenContext);
+  const isOrderMaker = token?.roles.toLowerCase().indexOf("order_maker".toLowerCase()) !== -1 ;
+
   const [showCustomerModal, setShowCustomerModal] = useState(false);
 
   const handleShowCustomerModal = (e) => {
@@ -63,16 +66,6 @@ const CustomerCrud = () => {
 
   const fetchData = useCallback(async () => {
     console.log(`fetchData ${getTitleUrl()}`);
-    console.log(`fetchData, token.btoa= ${btoa(token.username+':'+token.password)}`);
-    /*api(token).get(getTitleUrl())
-    .then(result => {
-      setCustomers(result.data.customers);
-      setTotalItems(result.data.totalItems);
-      setTotalPages(result.data.totalPages);
-      setCurrentPage(result.data.currentPage);})
-    .catch(err => console.log(err))*/
-
-    //setPage(result.data.currentPage);
     
     return fetch(baseURL+getTitleUrl(), {
       method: 'GET',
@@ -203,34 +196,31 @@ const callCustomerModal = () => {
   return (
     <>
     <div className="container mt-4">
-        <div>
-          Добро пожаловать, {encode(token.username+':'+token.password)}
-        </div>
       <form>
-        <div className="form-group my-2">
-          <label>Поиск по наименованию</label>
-          <input
-            type="text"
-            className="form-control"
-            value={textToSearchFor}
-            //onChange={e => setToSearchFor(e.target.value)}
-            onChange={textToSearchForChange}
-          />
-        </div>
-
-        <div>
-          <button disabled={page === 0} className="btn btn-primary m-4" value={-1} onClick={nextPage}>
-          {page}
-          </button>
-          <button disabled={page === parseInt(totalPages-1, 10)} className="btn btn-primary m-4" value={1} onClick={nextPage}>
-          {totalPages}
-          </button>
-          <button className="btn btn-warning m-4" onClick={handleShowCustomerModal}>
-            Добавить клиента
-          </button>{callCustomerModal}
-          <CustomerEditButton caption="New Customer" onClick={handleShowCustomerModal}/>
-
-        </div>
+      <Container className="mt-5">
+      <Row>
+        <Col sm={4}>
+          <Form className="d-flex">
+            <Form.Control
+              type="search"
+              placeholder="Search"
+              className="me-2"
+              aria-label="Search"
+              value={textToSearchFor}
+              onChange={textToSearchForChange}
+            />
+            <Button variant="outline-primary">
+              Поиск
+            </Button>
+          </Form>
+        </Col>
+        {isOrderMaker && (<Col sm={4}>
+        <Button variant="outline-warning" onClick={callCustomerModal}>
+              Создать
+            </Button>
+        </Col>)}
+      </Row>
+    </Container>
       </form>
       <CustomerList
         customers={customers}
@@ -241,6 +231,19 @@ const callCustomerModal = () => {
           handleChangeCustomer={handleChangeCustomer}
           handleSubmitCustomer={handleSubmitCustomer}
       />
+          <form>
+    <div>
+          <button disabled={page === 0} className="btn btn-primary m-4" value={-1} onClick={nextPage}>
+          {page}
+          </button>
+          <button disabled={page === parseInt(totalPages-1, 10)} className="btn btn-primary m-4" value={1} onClick={nextPage}>
+          {totalPages}
+          </button>
+
+          <CustomerEditButton caption="New Customer" onClick={handleShowCustomerModal}/>
+
+        </div>
+    </form>
     </div>
     </>
   );

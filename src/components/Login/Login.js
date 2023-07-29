@@ -35,7 +35,8 @@ import api  from "../http-common/http-common";
       const token = await loginUser({
         id:'0',
         username,
-        password
+        password,
+        roles:""
       });
 
       if (token) {
