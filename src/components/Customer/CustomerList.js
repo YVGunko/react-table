@@ -7,9 +7,6 @@ const CustomerList = ({ customers, ...props }) => {
       <thead className="thead-light">
         <tr>
           <th scope="col">Name</th>
-          <th scope="col">Email</th>
-          <th scope="col">Телефон</th>
-          <th scope="col">Опции</th>
         </tr>
       </thead>
       <tbody>

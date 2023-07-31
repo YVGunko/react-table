@@ -1,6 +1,10 @@
 import React from 'react'
-import CustomerModal from "./CustomerModal";
+import { createContext } from 'react';
 import  api  from "../http-common/http-common";
+
+
+
+export const CustomerContext = createContext();
 
 async function listOrder(id) {
   await api.get("/customers/orders/" + id);
@@ -30,7 +34,7 @@ function Customer(props) {
                     handleSubmitCustomer={handleSubmitCustomer}
                     handleNewOrder={handleNewOrder}
                     header="Редактировать клиента" 
-            />}*/}
+            />}
                 <button
                   type="button"
                   className="btn btn-danger mx-2"
@@ -51,7 +55,7 @@ function Customer(props) {
                   onClick={() => listOrder(customer)}
                 >
                   Заказы клиента
-                </button>
+                </button>*/}
               </td>
         </tr>
   )

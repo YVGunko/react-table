@@ -8,6 +8,7 @@ import CustomerEditButton from "./CustomerEditButton";
 import TokenContext from '../Token/Token';
 import { baseURL } from "../http-common/baseURL";
 import { encode } from "base-64";
+import Split from '@uiw/react-split';
 
 //const api = require("../http-common/http-common");
 
@@ -183,11 +184,13 @@ const callCustomerModal = () => {
 /* jsx */
   return (
     <>
-    <div className="container mt-4">
+    <div >
+    <Split disable style={{ maxHeight: '100%', border: '1px solid #d5d5d5', borderRadius: 3 }}>
+    <div style={{ maxWidth: '40%' }}>
       <form>
-      <Container className="mt-5">
+      <Container className="mt-4">
       <Row>
-        <Col sm={4}>
+        <Col sm={8}>
           <Form className="d-flex">
             <Form.Control
               type="search"
@@ -232,6 +235,18 @@ const callCustomerModal = () => {
 
         </div>
     </form>
+    </div>
+    <div style={{ flex: 1 }}>
+      <Split disable mode="vertical">
+        <div style={{ height: 100, maxHeight: '30%' }}>
+          Top Pane
+        </div>
+        <div style={{ maxHeight: '70%' }}>
+          Bottom Pane
+        </div>
+      </Split>
+      </div>
+    </Split>
     </div>
     </>
   );
