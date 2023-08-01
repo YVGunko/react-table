@@ -8,7 +8,7 @@ const PriceCrud = () => {
   const token = useContext(TokenContext);
   const header = `Price for ${token?.roles}`;
 
-  const [textToSearchFor, setTextToSearchFor] = useState([]);
+  const [textToSearchFor, setTextToSearchFor] = useState("");
 
     return (
           <div>

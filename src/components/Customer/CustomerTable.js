@@ -1,45 +1,76 @@
 import React, { useEffect, useState, useCallback, useRef, useContext } from "react";
-import { DataGrid } from '@mui/x-data-grid';
-
+import {
+  DataGrid,
+  gridPageCountSelector,
+  GridPagination,
+  useGridApiContext,
+  useGridSelector,
+} from '@mui/x-data-grid';
+import MuiPagination from '@mui/material/Pagination';
+import Box from '@mui/material/Box';
+import Stack from '@mui/material/Stack';
 import api from "../http-common/http-common";
 import TokenContext from '../Token/Token';
-import isStringInValid from '../../utils/utils'
+import { isString, isStringInValid } from '../../utils/utils'
 
 const columns = [
   { field: 'name', headerName: 'Наименование', width: 130 },
 ];
 
+
+function Pagination({ page, onPageChange, className }) {
+  const apiRef = useGridApiContext();
+  const pageCount = useGridSelector(apiRef, gridPageCountSelector);
+
+  return (
+    <MuiPagination
+      color="primary"
+      className={className}
+      count={pageCount}
+      page={page + 1}
+      onChange={(event, newPage) => {
+        onPageChange(event, newPage - 1);
+      }}
+    />
+  );
+}
+
+function CustomPagination(props) {
+  return <GridPagination ActionsComponent={Pagination} {...props} />;
+}
+
 export default function CustomerTable(textToSearchFor) {
   const token = useContext(TokenContext);
 
-  const [customers, setCustomers] = useState([]);
+  const [data, setData] = useState([]);
   const [totalItems, setTotalItems] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [currentPage, setCurrentPage] = useState(0);
 
   const getTitleUrl = useCallback(() => {
-    if (!currentPage)
-    console.log(`getTitleUrl, /customers?title=${textToSearchFor}&page=${currentPage}&size=10`);
-    if (textToSearchFor & isStringInValid(textToSearchFor,1)) {
-      console.log(`getTitleUrl, /customers?title=${textToSearchFor}&page=${currentPage}&size=10`);
-      return `/customers?title=${textToSearchFor}&page=${currentPage}&size=10`;
+    if (!currentPage) setCurrentPage(0);
+    if (isString(textToSearchFor) && !isStringInValid(textToSearchFor,1)) {
+     return `/customers?title=${textToSearchFor}&page=${currentPage}&size=10`;
     } else {
-      console.log(`getTitleUrl, /customers?page=${currentPage}&size=10`);
       return `/customers?page=${currentPage}&size=10`;
     }
   }, [textToSearchFor, currentPage]);
 
+  const rows = [
+    { id: 1, name: 'Нет доступа к данным о клиентах', phone: '...', email:"..." },
+  ];
+
   const fetchData = useCallback(async () => {
-    console.log(`fetchData Url=${getTitleUrl()}`);
     return api(getTitleUrl(), 'GET', token)
     .then(data => {
-      setCustomers(data.customers);
+      setData(data.customers);
       setTotalItems(data.totalItems);
       setTotalPages(data.totalPages);
       setCurrentPage(data.currentPage);
     })
-    .catch(
-      setCustomers(data.customers);
+    .catch((error) => {
+      setData(rows);
+    }
     )
 
   }, [getTitleUrl,token]);
@@ -50,16 +81,22 @@ export default function CustomerTable(textToSearchFor) {
   }, [fetchData]);
 
   return (
-    <div style={{ height: 400, width: '100%' }}>
-      <DataGrid
-        rows={customers}
-        columns={columns}
+    <Box sx={{ width: '100%' }}>
+      <Stack direction="row" spacing={1} sx={{ mb: 1 }}>
+        <DataGrid rows={data} columns={columns} 
+        rowCount={totalItems}
+        pageCount={totalPages}
+        pagination
+        slots={{
+          pagination: CustomPagination,
+        }}
         initialState={{
           pagination: {
-            paginationModel: { page: {currentPage}, pageSize: 10 },
+            paginationModel: { pageSize: 10, page: 0 },
           },
-        }}pageSizeOptions={[10]}
-      />
-    </div>
+        }}
+        pageSizeOptions={[10]}/>
+      </Stack>
+    </Box>
   );
 }
