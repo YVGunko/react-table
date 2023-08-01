@@ -6,6 +6,7 @@ import {
   useGridApiContext,
   useGridSelector,
 } from '@mui/x-data-grid';
+import TablePagination from '@mui/material/TablePagination';
 import MuiPagination from '@mui/material/Pagination';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
@@ -109,8 +110,7 @@ export default function CustomerTable(textToSearchFor) {
   return (
     <Box sx={{ width: '100%' }}>
       <Stack direction="row" spacing={1} sx={{ mb: 1 }}>
-        <
-        DataGrid rows={data} columns={columns} 
+        <DataGrid rows={data} columns={columns} 
         rowCount={rowCountState}
         gridPageCountSelector
         pageSizeOptions={[10]}
