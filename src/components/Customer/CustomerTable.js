@@ -97,15 +97,27 @@ export default function CustomerTable(textToSearchFor) {
     fetchData();
   }, [fetchData]);
 
+  function onPaginationModelChange () {
+    console.log(`onPaginationModelChange `);
+    if (currentPage === 0) {
+      console.log(`nextPage would be = ${currentPage+1}`);
+      setCurrentPage(1);
+      setPaginationModel({page:{currentPage},pageSize:10});
+    }
+    
+  }
   return (
     <Box sx={{ width: '100%' }}>
       <Stack direction="row" spacing={1} sx={{ mb: 1 }}>
-        <DataGrid rows={data} columns={columns} 
+        <
+        DataGrid rows={data} columns={columns} 
         rowCount={rowCountState}
+        gridPageCountSelector
         pageSizeOptions={[10]}
         paginationModel={paginationModel}
         paginationMode="server"
-        onPaginationModelChange={setPaginationModel}/>
+        onPaginationModelChange={onPaginationModelChange}
+        />
       </Stack>
     </Box>
   );
