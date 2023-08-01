@@ -17,7 +17,7 @@ const columns = [
   { field: 'name', headerName: 'Наименование', width: 130 },
 ];
 
-
+/*
 function Pagination({ page, onPageChange, className }) {
   const apiRef = useGridApiContext();
   const pageCount = useGridSelector(apiRef, gridPageCountSelector);
@@ -37,7 +37,7 @@ function Pagination({ page, onPageChange, className }) {
 
 function CustomPagination(props) {
   return <GridPagination ActionsComponent={Pagination} {...props} />;
-}
+}*/
 
 export default function CustomerTable(textToSearchFor) {
   const token = useContext(TokenContext);
@@ -46,6 +46,23 @@ export default function CustomerTable(textToSearchFor) {
   const [totalItems, setTotalItems] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [currentPage, setCurrentPage] = useState(0);
+
+  const [paginationModel, setPaginationModel] = React.useState({
+    page: 0,
+    pageSize: 10,
+  });
+  // Some API clients return undefined while loading
+  // Following lines are here to prevent `rowCountState` from being undefined during the loading
+  const [rowCountState, setRowCountState] = React.useState(
+    totalItems || 0,
+  );
+  React.useEffect(() => {
+    setRowCountState((prevRowCountState) =>
+    totalItems !== undefined
+        ? totalItems
+        : prevRowCountState,
+    );
+  }, [totalItems, setRowCountState]);
 
   const getTitleUrl = useCallback(() => {
     if (!currentPage) setCurrentPage(0);
@@ -84,18 +101,11 @@ export default function CustomerTable(textToSearchFor) {
     <Box sx={{ width: '100%' }}>
       <Stack direction="row" spacing={1} sx={{ mb: 1 }}>
         <DataGrid rows={data} columns={columns} 
-        rowCount={totalItems}
-        pageCount={totalPages}
-        pagination
-        slots={{
-          pagination: CustomPagination,
-        }}
-        initialState={{
-          pagination: {
-            paginationModel: { pageSize: 10, page: 0 },
-          },
-        }}
-        pageSizeOptions={[10]}/>
+        rowCount={rowCountState}
+        pageSizeOptions={[10]}
+        paginationModel={paginationModel}
+        paginationMode="server"
+        onPaginationModelChange={setPaginationModel}/>
       </Stack>
     </Box>
   );
