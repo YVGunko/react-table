@@ -1,64 +1,71 @@
-import React from 'react'
-import { createContext } from 'react';
+import React, { useState, createContext, useContext } from 'react';
+import PropTypes from 'prop-types';
 import  api  from "../http-common/http-common";
-
-
-
+import TokenContext from '../Token/Token';
 export const CustomerContext = createContext();
 
-async function listOrder(id) {
-  await api.get("/customers/orders/" + id);
+async function handleDeleteCustomer( id, token ) {
+  await api(`/customers/${id}`, 'DELETE', token);
 }
+async function handleSubmitCustomer ( customer, token ) {
+  //setSubmitting(true);
 
-async function deleteCustomer(id) {
-  await api.delete("/customers/delete/" + id);
+  await api("/customers", 'POST', token, 
+   JSON.stringify({
+       id: customer.id,
+       name: customer.name,
+       email: customer.email,
+       phone: customer.phone,
+  }) ).then((resp) => {
+   console.log("response :- ",resp?.data);
+   //setSubmitting(false);
+   return resp?.data;
+ })
+ .catch((error) => {
+    //setSubmitting(false);
+    console.log(`handleSubmitCustomer error: ${error}`);
+ });
 }
-
 // deconstructed props
-function Customer(props) {
-    const { customer, handleShowCustomerModal, handleNewOrder, show, setShow, 
-        handleChangeCustomer, handleSubmitCustomer} = props;
-  return (
-        <tr key={customer.id}>
-            <td>{customer.name}</td>
-            <td>{customer.email}</td>
-            <td>{customer.phone}</td>
-            <td>
-{/*            <button className="btn btn-warning m-4" onClick={handleShowCustomerModal}>
-             Редактировать
-            </button>{
-                <CustomerModal 
-                    show={show} 
-                    setShow={setShow} 
-                    handleChangeCustomer={handleChangeCustomer}
-                    handleSubmitCustomer={handleSubmitCustomer}
-                    handleNewOrder={handleNewOrder}
-                    header="Редактировать клиента" 
-            />}
-                <button
-                  type="button"
-                  className="btn btn-danger mx-2"
-                  onClick={() => deleteCustomer(customer.id)}
-                >
-                  Delete
-                </button>
-                <button
-                  type="button"
-                  className="btn btn-primary mx-2"
-                  onClick={() => handleNewOrder(customer.id)}
-                >
-                  Создать заказ
-                </button>
-                <button
-                  type="button"
-                  className="btn btn-info mx-2"
-                  onClick={() => listOrder(customer)}
-                >
-                  Заказы клиента
-                </button>*/}
-              </td>
-        </tr>
-  )
+export default function useCustomer(id) {
+  const token = useContext(TokenContext);
+
+  const getCustomer = (id) => {
+    console.log(`useCustomer.getCustomer Url=/customers/${id}`);
+    return api(`/customers/${id}`, 'GET', token)
+    .then(data => {
+      setCustomer(data);
+      return customer;
+    })
+    .catch((error) => {
+      setCustomer({
+        name: 'Ошибка при получении данных пользователя',
+        phone: '',
+        email: '',
+        id: '',
+      });
+      return customer;
+    });
+  }
+  
+  const [customer, setCustomer ] = useState(getCustomer(id));
+
+  const saveCustomer = customer => {
+    console.log(`useCustomer.saveCustomer customers${customer}`);
+    handleSubmitCustomer(customer, token);
+  };
+
+  const deleteCustomer = (id) => {
+    console.log(`useCustomer.deleteCustomer customers${id}`);
+    handleDeleteCustomer(id, token);
+  };
+
+  return {
+    setCustomer: saveCustomer,
+    customer
+  }
 }
 
-export default Customer;
+useCustomer.propTypes = {
+  id: PropTypes.string.isRequired
+};

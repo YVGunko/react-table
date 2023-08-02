@@ -19,7 +19,7 @@ function App() {
   
   return (
     <TokenContext.Provider value={token}>
-    <div style={{ height: '100%', position: 'absolute', left: '0px', width: '100%', overflow: 'hidden'}}>
+    <div style={{ height: '100vh', width: '100vw', position: 'absolute', left: '0px', overflow: 'hidden'}}>
       <BrowserRouter>
         <NavigationBar token={token} />
         <Switch>

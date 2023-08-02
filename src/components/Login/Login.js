@@ -3,19 +3,6 @@ import PropTypes from 'prop-types';
 import './Login.css';
 import api  from "../http-common/http-common";
 
-/*async function loginUser(credentials) {
-    console.log(`loginUser, credentials=${credentials.username}`);
-    return fetch(baseURLogin, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        "Authorization": 'Basic ' + btoa(credentials.username+':'+credentials.password)
-      },
-      body: JSON.stringify(credentials)
-    })
-      .then(data => data.json())
-   }*/
-
    async function loginUser(credentials) {
     console.log(`loginUser, credentials=${credentials?.password}`);
     return api('/login', 'POST', credentials, credentials);
@@ -48,7 +35,6 @@ import api  from "../http-common/http-common";
           });
         }else{
           token.password = password;
-          //console.log(`Login, token=${token?.password}`);
           setToken(token);
         }
       }

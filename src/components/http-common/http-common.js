@@ -2,8 +2,7 @@ import { baseURL } from "./baseURL";
 // General api to acces data from web
 export default function api(path,method,credentials,params){
 
-  console.log(`General api path= ${path}`);
-  console.log(`General api credentials.password= ${credentials.password}`);
+  console.log(`http-common api path= ${path}`);
 
   let options;
       options = Object.assign({headers: {
@@ -18,10 +17,10 @@ export default function api(path,method,credentials,params){
       return fetch(baseURL+path, options)
           .then(resp => {
             if (resp.ok) {
-              console.log(`General api to acces data from web responced Ok= ${resp?.status}`);
+              console.log(`http-common api to acces data from web responced Ok= ${resp?.status}`);
               return resp.json();
             } else {
-              console.log(`General api to acces data from web responced with code= ${resp?.status}`);
+              console.log(`http-common api to acces data from web responced with code= ${resp?.status}`);
               if (resp.status === NO_RESPONSE_CODE) {
                 // server unavailable
                 return Promise.reject(new Error('Server unavailable'));
@@ -34,7 +33,7 @@ export default function api(path,method,credentials,params){
           })
           .then( json => json)
           .catch((error) => {
-            console.log(`General api to acces data from web error= ${error?.message}`);
+            console.log(`http-common api to acces data from web error= ${error?.message}`);
             let err = {
               error : true,
               status : error?.message

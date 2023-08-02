@@ -11,7 +11,7 @@ const NavigationBar = (props) => {
     const isPrice = token?.roles.toLowerCase().indexOf(priceLink.toLowerCase()) !== -1 ;
     const isOrderMaker = token?.roles.toLowerCase().indexOf("order_maker".toLowerCase()) !== -1 ;
     const isPriceMaker = token?.roles.toLowerCase().indexOf("price_maker".toLowerCase()) !== -1 ;
-    console.log(`is = ${isOrder}, ${isPrice}, ${isOrderMaker}, ${isPriceMaker}`)
+
     return (
         <Navbar collapseOnSelect expand="sm" bg="light" variant="light">
         <Navbar.Toggle aria-controls="navbarScroll" data-bs-target="#navbarScroll"/>
