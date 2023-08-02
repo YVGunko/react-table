@@ -5,70 +5,31 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 
 import api from "../http-common/http-common";
-import { CustomerContext } from './Customer';
+//import { CustomerContext } from './Customer';
 import TokenContext from '../Token/Token';
+import Customer from './Customer';
 
 
-const CustomerEdit= () => {
+const CustomerEdit = () => {
     const token = useContext(TokenContext);
-    const customer = useContext(CustomerContext);
+    //const customer = useContext(CustomerContext);
+    const [customer, setCustomer] = useState({});
     const [submitting, setSubmitting] = useState(false);
+
     const handleChangeCustomer = event => {
         const target = event.currentTarget;
-        console.log(`handleChangeCustomer: id=${customer.id}, name=${customer.name}, phone=${customer.phone}`);
+        //console.log(`handleChangeCustomer: id=${Customer.customer.id}, name=${customer.name}, phone=${customer.phone}`);
         setCustomer({
           ...customer, 
             [target.name]: target.value});
       }
  
-      async function handleSubmitCustomer ( event ) {
+    async function handleSubmitCustomer ( event ) {
         console.log("handleSubmitCustomer! ", customer);
-        setSubmitting(true);
+        //setSubmitting(true);
         if (event.preventDefault) event.preventDefault();
-         await api("/customers", 'POST', token, 
-         JSON.stringify({
-             id:"new",
-             name: customer.name,
-             email: customer.email,
-             phone: customer.phone,
-        }) ).then((resp) => {
-         console.log("response :- ",resp);
-         setCustomer({
-             ...customer, 
-               id: resp.data.id,
-               name: resp.data.name,
-               email: resp.data.email,
-               phone: resp.data.phone});
-          setSubmitting(false);
-          //console.log(`handleSubmitCustomer: id=${customer.id}, name=${customer.name}, phone=${customer.phone}`);
-       })
-       .catch((error) => {
-          setSubmitting(false);
-          alert(error);
-       });
+        Customer(customer.id).setCustomer({customer});
     }
-    async function handleNewOrder(id) {
-        //if (event.preventDefault) event.preventDefault();
-        console.log(`newOrder for customer.id=${id}`);
-        //await api.post(`/customers/orders/${id}`)
-        await api(`/customers/orders/${id}`, 'POST', token)
-        .then((data) => {
-          console.log("response :- ",data);
-          setCustomer({
-              ...customer, 
-                id: data.id,
-                name: data.name,
-                email: data.email,
-                phone: data.phone});
-           setSubmitting(false);
-           //console.log(`handleSubmitCustomer: id=${customer.id}, name=${customer.name}, phone=${customer.phone}`);
-        })
-        .catch((error) => {
-           setSubmitting(false);
-           alert(error);
-        });
-    
-      }
  return (
          <>            
             <Box sx={{ height: '100%', width: '100%', 

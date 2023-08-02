@@ -2,7 +2,7 @@ import React, { useState, createContext, useContext } from 'react';
 import PropTypes from 'prop-types';
 import  api  from "../http-common/http-common";
 import TokenContext from '../Token/Token';
-export const CustomerContext = createContext();
+//export const CustomerContext = createContext();
 
 async function handleDeleteCustomer( id, token ) {
   await api(`/customers/${id}`, 'DELETE', token);
@@ -26,8 +26,8 @@ async function handleSubmitCustomer ( customer, token ) {
     console.log(`handleSubmitCustomer error: ${error}`);
  });
 }
-// deconstructed props
-export default function useCustomer(id) {
+
+export default function Customer(id) {
   const token = useContext(TokenContext);
 
   const getCustomer = (id) => {
@@ -47,8 +47,8 @@ export default function useCustomer(id) {
       return customer;
     });
   }
-  
-  const [customer, setCustomer ] = useState(getCustomer(id));
+
+  const [ customer, setCustomer ] = useState(getCustomer(id));
 
   const saveCustomer = customer => {
     console.log(`useCustomer.saveCustomer customers${customer}`);
@@ -66,6 +66,6 @@ export default function useCustomer(id) {
   }
 }
 
-useCustomer.propTypes = {
+Customer.propTypes = {
   id: PropTypes.string.isRequired
 };

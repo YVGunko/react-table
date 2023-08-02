@@ -10,6 +10,15 @@ const CustomerList = ({ customers, ...props }) => {
         </tr>
       </thead>
       <tbody>
+
+      </tbody>
+    </table>
+  );
+};
+
+export default CustomerList;
+
+/*
       {customers.map(customer => (
           <Customer 
           key={customer.id} 
@@ -17,9 +26,4 @@ const CustomerList = ({ customers, ...props }) => {
           {...props}
           />         
       ))}
-      </tbody>
-    </table>
-  );
-};
-
-export default CustomerList;
+*/

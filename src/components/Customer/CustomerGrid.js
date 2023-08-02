@@ -8,28 +8,27 @@ import Stack from '@mui/material/Stack';
 import api from "../http-common/http-common";
 import TokenContext from '../Token/Token';
 import { isString, isStringInValid } from '../../utils/utils'
+import CustomerEdit from './CustomerEdit';
+import Customer, {customer, setCustomer} from './Customer';
 
 const columns = [
   { field: 'name', headerName: 'Наименование', width: 230 },
 ];
 
-export default function CustomerTable(textToSearchFor) {
+export default function CustomerGrid(textToSearchFor) {
   const token = useContext(TokenContext);
-  const [loading, setLoading] = React.useState(false);
+  const [customer, setCustomer] = useState({});
+  const [loading, setLoading] = useState(false);
   const [data, setData] = useState([]);
   const [totalItems, setTotalItems] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [currentPage, setCurrentPage] = useState(0);
 
-  const [paginationModel, setPaginationModel] = React.useState({
-    page: 0,
-    pageSize: 10,
-  });
+  const [paginationModel, setPaginationModel] = React.useState({ page: 0, pageSize: 10, });
   const [rowSelectionModel, setRowSelectionModel] = React.useState([]);
+  const [rowCountState, setRowCountState] = React.useState( totalItems || 0, );
+  const fakeRows = [ { id: 1, name: 'Нет доступа к данным о клиентах', phone: '...', email:"..." }, ];
 
-  const [rowCountState, setRowCountState] = React.useState(
-    totalItems || 0,
-  );
   React.useEffect(() => {
     setRowCountState((prevRowCountState) =>
     totalItems !== undefined
@@ -46,10 +45,6 @@ export default function CustomerTable(textToSearchFor) {
     }
   }, [textToSearchFor, paginationModel]);
 
-  const fakeRows = [
-    { id: 1, name: 'Нет доступа к данным о клиентах', phone: '...', email:"..." },
-  ];
-
   const fetchData = useCallback(async () => {
     setLoading(true);
     return api(getTitleUrl(), 'GET', token)
@@ -64,8 +59,7 @@ export default function CustomerTable(textToSearchFor) {
       console.log(`CustomerGrid fetchData ${JSON.stringify(error)}`);
       setData(fakeRows);
       setLoading(false);
-    }
-    )
+      })
 
   }, [getTitleUrl,token]);
 
@@ -80,6 +74,7 @@ export default function CustomerTable(textToSearchFor) {
   function onRowSelectionModelChange (onRowSelectionModelChangeL) {
     console.log(`onRowSelectionModelChange ${JSON.stringify(onRowSelectionModelChangeL)}`);
     setRowSelectionModel(onRowSelectionModelChangeL);
+    Customer(onRowSelectionModelChangeL).customer;
   }
 
   return (
