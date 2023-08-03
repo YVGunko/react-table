@@ -9,15 +9,13 @@ async function handleDeleteCustomer( id, token ) {
 }
 export async function submitCustomer ( customer, token ) {
   //setSubmitting(true);
-
   await api("/customers", 'POST', token, 
-   JSON.stringify({
-       id: customer.id,
+   {   id: customer.id,
        name: customer.name,
        email: customer.email,
-       phone: customer.phone,
-  }) ).then((resp) => {
-   console.log("response :- ",resp?.data);
+       phone: customer.phone, } )
+  .then((resp) => {
+   console.log(`response :- ${JSON.stringify(resp?.data)}`);
    //setSubmitting(false);
    return resp?.data;
  })

@@ -20,7 +20,7 @@ export default function api(path,method,credentials,params){
               console.log(`http-common api to acces data from web responced Ok= ${resp?.status}`);
               return resp.json();
             } else {
-              console.log(`http-common api to acces data from web responced with code= ${resp?.status}`);
+              console.log(`http-common api to access data from web responced with code= ${resp?.status}`);
               if (resp.status === NO_RESPONSE_CODE) {
                 // server unavailable
                 return Promise.reject(new Error('Server unavailable'));

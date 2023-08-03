@@ -31,8 +31,7 @@ const CustomerEdit = () => {
         setCustomer({
           ...customer, 
             [target.name]: target.value});
-        console.log(`handleChangeCustomer: id=${customer.id}, name=${customer.name}, phone=${customer.phone}`);
- 
+        console.log(`handleChangeCustomer: prop=${target.name}, value=${target.value}`); 
     }
  
     async function handleSubmit ( event ) {
@@ -75,6 +74,7 @@ const CustomerEdit = () => {
               id="email"
               label="адрес email"
               name="email"
+              type="email" 
               placeholder="ivanov@ivan.ru"
               onChange={handleChange} 
             />
@@ -82,10 +82,10 @@ const CustomerEdit = () => {
                 value={customer.phone || ''} 
               margin="normal"
               fullWidth
-              name="phone"
-              label="номер телефона"
-              type="phone"
               id="phone"
+              label="номер телефона"
+              name="phone"             
+              type="phone"              
               placeholder="+7"
               onChange={handleChange} 
             />
