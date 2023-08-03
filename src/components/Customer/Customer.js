@@ -1,4 +1,4 @@
-import React, { useState, createContext, useContext } from 'react';
+import { useState, createContext, useContext } from 'react';
 import PropTypes from 'prop-types';
 import  api  from "../http-common/http-common";
 import TokenContext from '../Token/Token';
@@ -27,31 +27,33 @@ async function handleSubmitCustomer ( customer, token ) {
  });
 }
 
-export default function Customer(id) {
+export default function useCustomer(id) {
   const token = useContext(TokenContext);
 
-  const getCustomer = (id) => {
+  const getCustomer = (id) =>  {
     console.log(`useCustomer.getCustomer Url=/customers/${id}`);
-    return api(`/customers/${id}`, 'GET', token)
+    api(`/customers/${id}`, 'GET', token)
     .then(data => {
-      setCustomer(data);
-      return customer;
+      console.log(`useCustomer.getCustomer data=${data?.id}`);
+      const thisCustomer = data;
+      return thisCustomer;
     })
     .catch((error) => {
-      setCustomer({
+      const thisCustomer = {
         name: 'Ошибка при получении данных пользователя',
         phone: '',
         email: '',
         id: '',
-      });
-      return customer;
+      };
+      return thisCustomer
     });
   }
 
   const [ customer, setCustomer ] = useState(getCustomer(id));
 
-  const saveCustomer = customer => {
+  const saveCustomer = thisCustomer => {
     console.log(`useCustomer.saveCustomer customers${customer}`);
+    setCustomer(thisCustomer);
     handleSubmitCustomer(customer, token);
   };
 
@@ -66,6 +68,6 @@ export default function Customer(id) {
   }
 }
 
-Customer.propTypes = {
+useCustomer.propTypes = {
   id: PropTypes.string.isRequired
 };

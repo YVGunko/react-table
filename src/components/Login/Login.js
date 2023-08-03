@@ -3,12 +3,12 @@ import PropTypes from 'prop-types';
 import './Login.css';
 import api  from "../http-common/http-common";
 
-   async function loginUser(credentials) {
+  async function loginUser(credentials) {
     console.log(`loginUser, credentials=${credentials?.password}`);
     return api('/login', 'POST', credentials, credentials);
-   }
+  }
 
-   export default function Login({ setToken }) {
+  export default function Login({ setToken }) {
     console.log(`Login, start`);
     const [username, setUserName] = useState();
     const [password, setPassword] = useState();
@@ -19,7 +19,7 @@ import api  from "../http-common/http-common";
   
     const handleSubmit = async e => {
       e.preventDefault();
-      const token = await loginUser({
+      const token = await loginUser({ //TODO useCustomer(0) ???
         id:'0',
         username,
         password,
@@ -38,12 +38,11 @@ import api  from "../http-common/http-common";
           setToken(token);
         }
       }
-    }
-    if (error?.error) {
-      return(
-      <div className="login-wrapper"><h1>Нет доступа к серверу приложения. Попробуйте позже...</h1></div>
-      )
-    } else {
+  }
+  
+  if (error?.error) {
+    return(<div className="login-wrapper"><h1>Нет доступа к серверу приложения. Попробуйте позже...</h1></div> )
+  } else {
       return(
         <div className="p-4">
         <div className="container">
@@ -67,9 +66,8 @@ import api  from "../http-common/http-common";
           </div>
         </div>
         </div>
-
       )
-    }
+  }
 }
 
 Login.propTypes = {

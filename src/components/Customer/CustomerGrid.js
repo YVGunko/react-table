@@ -9,15 +9,16 @@ import api from "../http-common/http-common";
 import TokenContext from '../Token/Token';
 import { isString, isStringInValid } from '../../utils/utils'
 import CustomerEdit from './CustomerEdit';
-import Customer, {customer, setCustomer} from './Customer';
+import useCustomer from './Customer';
 
 const columns = [
   { field: 'name', headerName: 'Наименование', width: 230 },
 ];
 
+
 export default function CustomerGrid(textToSearchFor) {
   const token = useContext(TokenContext);
-  const [customer, setCustomer] = useState({});
+  const [customer, setCustomer] = useCustomer(0);
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState([]);
   const [totalItems, setTotalItems] = useState(0);
@@ -29,6 +30,15 @@ export default function CustomerGrid(textToSearchFor) {
   const [rowCountState, setRowCountState] = React.useState( totalItems || 0, );
   const fakeRows = [ { id: 1, name: 'Нет доступа к данным о клиентах', phone: '...', email:"..." }, ];
 
+  function changeCustomer (id) {
+    setCustomer({ //TODO useCustomer(0) ???
+      id: id,
+      username: "",
+      password: "",
+      roles: ""
+    });
+  }
+  
   React.useEffect(() => {
     setRowCountState((prevRowCountState) =>
     totalItems !== undefined
@@ -74,7 +84,7 @@ export default function CustomerGrid(textToSearchFor) {
   function onRowSelectionModelChange (onRowSelectionModelChangeL) {
     console.log(`onRowSelectionModelChange ${JSON.stringify(onRowSelectionModelChangeL)}`);
     setRowSelectionModel(onRowSelectionModelChangeL);
-    Customer(onRowSelectionModelChangeL).customer;
+    changeCustomer(onRowSelectionModelChangeL);
   }
 
   return (

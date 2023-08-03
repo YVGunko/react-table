@@ -22,7 +22,7 @@ const CustomerEdit = () => {
         setCustomer({
           ...customer, 
             [target.name]: target.value});
-      }
+    }
  
     async function handleSubmitCustomer ( event ) {
         console.log("handleSubmitCustomer! ", customer);
@@ -42,11 +42,11 @@ const CustomerEdit = () => {
                         value={customer.name || ''} 
                         onChange={handleChangeCustomer} 
                     />
-                    <TextField required id="customer-phone" label="Наименование" type="phone" placeholder="+7"
+                    <TextField required id="customer-phone" label="Телефон" type="phone" placeholder="+7"
                         value={customer.phone || ''} 
                         onChange={handleChangeCustomer} 
                     />
-                    <TextField required id="customer-email" label="Наименование" type="email" placeholder="ivanov@ivan.ru"
+                    <TextField required id="customer-email" label="e-mail" type="email" placeholder="ivanov@ivan.ru"
                         value={customer.email || ''} 
                         onChange={handleChangeCustomer} 
                     />         
