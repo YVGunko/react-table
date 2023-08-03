@@ -6,10 +6,10 @@ import {
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import api from "../http-common/http-common";
+
+import { isString, isStringInValid } from '../../utils/utils';
 import TokenContext from '../Token/Token';
-import { isString, isStringInValid } from '../../utils/utils'
-import CustomerEdit from './CustomerEdit';
-import useCustomer from './Customer';
+import {CustomerContext} from '../Price/PriceCrud';
 
 const columns = [
   { field: 'name', headerName: 'Наименование', width: 230 },
@@ -18,9 +18,16 @@ const columns = [
 
 export default function CustomerGrid(textToSearchFor) {
   const token = useContext(TokenContext);
-  const [customer, setCustomer] = useCustomer(0);
+  if (token === undefined) {
+    throw new Error('token undefined')
+  }
+  const {customerHasChanged} = useContext(CustomerContext);
+  if (customerHasChanged === undefined) {
+    throw new Error('CustomerContext  undefined')
+  }
+
   const [loading, setLoading] = useState(false);
-  const [data, setData] = useState([]);
+  const [rows, setRows] = useState([]);
   const [totalItems, setTotalItems] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [currentPage, setCurrentPage] = useState(0);
@@ -30,15 +37,6 @@ export default function CustomerGrid(textToSearchFor) {
   const [rowCountState, setRowCountState] = React.useState( totalItems || 0, );
   const fakeRows = [ { id: 1, name: 'Нет доступа к данным о клиентах', phone: '...', email:"..." }, ];
 
-  function changeCustomer (id) {
-    setCustomer({ //TODO useCustomer(0) ???
-      id: id,
-      username: "",
-      password: "",
-      roles: ""
-    });
-  }
-  
   React.useEffect(() => {
     setRowCountState((prevRowCountState) =>
     totalItems !== undefined
@@ -59,7 +57,7 @@ export default function CustomerGrid(textToSearchFor) {
     setLoading(true);
     return api(getTitleUrl(), 'GET', token)
     .then(data => {
-      setData(data.customers);
+      setRows(data.customers);
       setTotalItems(data.totalItems);
       setTotalPages(data.totalPages);
       setCurrentPage(data.currentPage);
@@ -67,7 +65,7 @@ export default function CustomerGrid(textToSearchFor) {
     })
     .catch((error) => {
       console.log(`CustomerGrid fetchData ${JSON.stringify(error)}`);
-      setData(fakeRows);
+      setRows(fakeRows);
       setLoading(false);
       })
 
@@ -81,16 +79,23 @@ export default function CustomerGrid(textToSearchFor) {
     console.log(`onPaginationModelChange ${JSON.stringify(paginationModelL)}`);
     setPaginationModel({page:paginationModelL.page, pageSize: paginationModelL.pageSize});
   }
+  /*
   function onRowSelectionModelChange (onRowSelectionModelChangeL) {
     console.log(`onRowSelectionModelChange ${JSON.stringify(onRowSelectionModelChangeL)}`);
     setRowSelectionModel(onRowSelectionModelChangeL);
-    changeCustomer(onRowSelectionModelChangeL);
-  }
+    customerHasChanged(onRowSelectionModelChangeL);
+  }*/
+
+  const onRowsSelectionHandler = (ids) => {
+    const selectedRowsData = ids.map((id) => rows.find((row) => row.id === id));
+    console.log(selectedRowsData);
+    customerHasChanged(selectedRowsData[0]);
+  };
 
   return (
     <Box sx={{ height: '100%', width: '100%' }}>
       <Stack direction="row" spacing={1} sx={{ mb: 1 }}>
-        <DataGrid rows={data} columns={columns} 
+        <DataGrid rows={rows} columns={columns} 
         rowCount={rowCountState}
         gridPageCountSelector
         pageSizeOptions={[10, 25]}
@@ -100,7 +105,7 @@ export default function CustomerGrid(textToSearchFor) {
         onPaginationModelChange={ onPaginationModelChange }
 
         rowSelectionModel={rowSelectionModel}
-        onRowSelectionModelChange={ onRowSelectionModelChange }
+        onRowSelectionModelChange={ (ids) => onRowsSelectionHandler (ids) }
         keepNonExistentRowsSelected
 
         autoHeight={true}

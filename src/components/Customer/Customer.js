@@ -7,7 +7,7 @@ import TokenContext from '../Token/Token';
 async function handleDeleteCustomer( id, token ) {
   await api(`/customers/${id}`, 'DELETE', token);
 }
-async function handleSubmitCustomer ( customer, token ) {
+export async function submitCustomer ( customer, token ) {
   //setSubmitting(true);
 
   await api("/customers", 'POST', token, 
@@ -25,6 +25,23 @@ async function handleSubmitCustomer ( customer, token ) {
     //setSubmitting(false);
     console.log(`handleSubmitCustomer error: ${error}`);
  });
+}
+
+export async function fetchCustomer(id, token) {
+    api(`/customers/${id}`, 'GET', token)
+    .then(data => {
+      console.log(`useCustomer.fetchCustomer data=${data?.id}`);
+      return data;
+    })
+    .catch((error) => {
+      const data = {
+        name: 'Ошибка при получении данных пользователя',
+        phone: '',
+        email: '',
+        id: '',
+      };
+      return data;
+    });
 }
 
 export default function useCustomer(id) {
@@ -54,7 +71,7 @@ export default function useCustomer(id) {
   const saveCustomer = thisCustomer => {
     console.log(`useCustomer.saveCustomer customers${customer}`);
     setCustomer(thisCustomer);
-    handleSubmitCustomer(customer, token);
+    submitCustomer(customer, token);
   };
 
   const deleteCustomer = (id) => {
