@@ -4,16 +4,16 @@ import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
 import Container from '@mui/material/Container';
 import Button from '@mui/material/Button';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
+
 //import api from "../http-common/http-common";
 import { submitCustomer } from './Customer';
 import TokenContext from '../Token/Token';
-import {CustomerContext} from '../Price/PriceCrud';
+import  {CustomerProvider, useCustomer} from './customer-context';
+//import {CustomerContext} from '../Price/PriceCrud';
 
-const defaultTheme = createTheme();
 const CustomerEdit = () => {
     const token = useContext(TokenContext);
-    const {selectedCustomer, setSelectedCustomer} = useContext(CustomerContext);
+    const {selectedCustomer, setSelectedCustomer} = useCustomer();
     const [customer, setCustomer] = useState(selectedCustomer);
     const [submitting, setSubmitting] = useState(false);
 
@@ -43,17 +43,9 @@ const CustomerEdit = () => {
         //Customer(customer.id).setCustomer({customer});
     }
  return (
-    <ThemeProvider theme={defaultTheme}>
+    
       <Container component="main" maxWidth="xs">
         <CssBaseline />
-        <Box
-          sx={{
-            marginTop: 1,
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-          }}
-        >
           <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
           <TextField
                 value={customer.name || ''} 
@@ -98,10 +90,7 @@ const CustomerEdit = () => {
               Сохранить
             </Button>
           </Box>
-        </Box>
       </Container>
-    </ThemeProvider>
- 
      )
  }
 

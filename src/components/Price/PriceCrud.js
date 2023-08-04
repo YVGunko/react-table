@@ -1,46 +1,49 @@
 import React, { useReducer, useState, useCallback, useRef, useContext, createContext } from "react";
 
 import Split from '@uiw/react-split';
-import TokenContext from '../Token/Token';
+import IconButton from '@mui/material/IconButton';
+import CssBaseline from '@mui/material/CssBaseline';
+import InputBase from '@mui/material/InputBase';
+import Container from '@mui/material/Container';
+import Box from '@mui/material/Box';
+import SearchIcon from '@mui/icons-material/Search';
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import Divider from '@mui/material/Divider';
+import Button from '@mui/material/Button';
 
+import TokenContext from '../Token/Token';
 import CustomerGrid from "../Customer/CustomerGrid";
 import CustomerEdit from "../Customer/CustomerEdit";
-import {fetchCustomer} from "../Customer/Customer";
-
-export const CustomerContext = createContext({});
-CustomerContext.displayName = 'CustomerContext';
 
 const PriceCrud = () => {
-  const token = useContext(TokenContext);
-  const [selectedCustomer, setSelectedCustomer] = useState([]);
-  const fakeRows = { id: 1, name: 'Нет доступа к данным о клиентах', phone: '...', email:"..." };
   const [textToSearchFor, setTextToSearchFor] = useState("");
+  const token = useContext(TokenContext);
+  const isOrderMaker = token?.roles.toLowerCase().indexOf("order_maker".toLowerCase()) !== -1 ;
 
-  /*const customerHasChanged = useCallback(async (id) => {
-    console.log(`customerHasChanged =${id}`);
-    fetchCustomer(id , token).then(data => {
-      console.log(`customerHasChanged =${id}`);
-      setSelectedCustomer(data)});
-  }, []);
-
-  function customerHasChanged(id) {
-    console.log(`customerHasChanged =${id}`);
-    const dustomer = async () => {
-      fetchCustomer(id , token);
-      setSelectedCustomer(fakeRows);
-    }
-  };*/
-  function customerHasChanged(row) {
-    console.log(`customerHasChanged =${row?.id}, ${row?.email}`);
-    setSelectedCustomer(row);
-  };
     return (
       <div>
-        <CustomerContext.Provider value={{selectedCustomer, setSelectedCustomer, customerHasChanged}}>
         <Split disable style={{ position: "static", height: '100%', border: '1px solid #d5d5d5' }}>
           <div style={{ minWidth: '35%', maxWidth: '35%', backgroundColor: '#eaeaea' }}>
+          <Container component="main" maxWidth="xs">
+          <CssBaseline />
+            <Box component="form" sx={{ p: '2px 4px', display: 'flex', alignItems: 'center', width: 400 }}>
+              <InputBase
+                sx={{ ml: 1, flex: 1 }}
+                placeholder="Поиск клиента"
+                inputProps={{ 'aria-label': 'search google maps' }}
+              />
+              <IconButton type="button" sx={{ p: '10px' }} aria-label="search">
+                <SearchIcon />
+              </IconButton>
+              <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" />
+              {isOrderMaker && (<IconButton color="primary" sx={{ p: '10px' }} aria-label="directions">
+                <PersonAddIcon />
+              </IconButton>)}
+            </Box>
             <CustomerGrid textToSearchFor={textToSearchFor} />
-          </div>
+          </Container>
+            
+      </div>
 
           <div style={{ flex: 1 }}>
           <Split disable mode="vertical">
@@ -53,7 +56,6 @@ const PriceCrud = () => {
           </Split>
           </div>
         </Split>
-        </CustomerContext.Provider>
       </div>
     );
 }

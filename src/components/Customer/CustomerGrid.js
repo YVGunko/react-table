@@ -9,7 +9,7 @@ import api from "../http-common/http-common";
 
 import { isString, isStringInValid } from '../../utils/utils';
 import TokenContext from '../Token/Token';
-import {CustomerContext} from '../Price/PriceCrud';
+import {useCustomer} from '../Customer/customer-context';
 
 const columns = [
   { field: 'name', headerName: 'Наименование', width: 230 },
@@ -21,11 +21,7 @@ export default function CustomerGrid(textToSearchFor) {
   if (token === undefined) {
     throw new Error('token undefined')
   }
-  const {customerHasChanged} = useContext(CustomerContext);
-  if (customerHasChanged === undefined) {
-    throw new Error('CustomerContext  undefined')
-  }
-
+  const setCustomer = useCustomer.setCustomer;
   const [loading, setLoading] = useState(false);
   const [rows, setRows] = useState([]);
   const [totalItems, setTotalItems] = useState(0);
@@ -88,8 +84,8 @@ export default function CustomerGrid(textToSearchFor) {
 
   const onRowsSelectionHandler = (ids) => {
     const selectedRowsData = ids.map((id) => rows.find((row) => row.id === id));
-    console.log(selectedRowsData);
-    customerHasChanged(selectedRowsData[0]);
+    console.log(`CustomerGrid.onRowsSelectionHandler= ${selectedRowsData[0]}`);
+    setCustomer(selectedRowsData[0]);
   };
 
   return (

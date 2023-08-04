@@ -1,10 +1,10 @@
-import { useState, createContext, useContext } from 'react';
+import { useMemo, useState, useCallback, createContext, useContext } from 'react';
 
 const CustomerContext = createContext()
 
 function CustomerProvider(props) {
-    const [customer, setCustomer] = React.useState([])
-    const value = React.useMemo(() => {
+    const [customer, setCustomer] = useState([])
+    const value = useMemo(() => {
       return {
         customer,
         setCustomer,
@@ -19,17 +19,17 @@ function useCustomer() {
       throw new Error('useCustomer must be used within a CustomerContext')
     }
     const {customer, setCustomer} = context
-    const getCustomer = React.useCallback(() => setCount(c => c + 1), [setCustomer])
-    const createCustomer = React.useCallback(() => setCount(c => c + 1), [setCustomer])
-    const saveCustomer = React.useCallback(() => setCount(c => c + 1), [setCustomer])
-    const deleteCustomer = React.useCallback(() => setCount(c => c + 1), [setCustomer])
+    /*const getCustomer = useCallback(() => setCustomer(c => c + 1), [setCustomer])
+    const createCustomer = useCallback(() => setCount(c => c + 1), [setCustomer])
+    const saveCustomer = useCallback(() => setCount(c => c + 1), [setCustomer])
+    const deleteCustomer = useCallback(() => setCount(c => c + 1), [setCustomer])*/
 
     return {
         customer,
-        getCustomer,
-        createCustomer,
+        setCustomer,
+        /*createCustomer,
         saveCustomer,
-        deleteCustomer,
+        deleteCustomer,*/
     }
 }
 export {CustomerProvider, useCustomer}

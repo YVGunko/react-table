@@ -1,6 +1,7 @@
 import React from 'react';
 import "bootstrap/dist/css/bootstrap.min.css";
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 import Login from '../Login/Login';
 import TokenContext from '../Token/Token';
@@ -12,12 +13,14 @@ import {orderPath, pricePath} from '../http-common/baseURL';
 
 
 function App() {
+  const defaultTheme = createTheme();
   const { token, setToken } = useToken();
   if(!token) {
     return <Login setToken={setToken} />
   }
   
   return (
+    <ThemeProvider theme={defaultTheme}>
     <TokenContext.Provider value={token}>
     <div style={{ height: '100vh', width: '100vw', position: 'absolute', left: '0px', overflow: 'hidden'}}>
       <BrowserRouter>
@@ -36,6 +39,7 @@ function App() {
       </BrowserRouter>
     </div>
     </TokenContext.Provider>
+    </ThemeProvider>
   );
 }
 
