@@ -7,17 +7,18 @@ import Button from '@mui/material/Button';
 
 //import api from "../http-common/http-common";
 import { submitCustomer } from './Customer';
-import TokenContext from '../Token/Token';
+//import TokenContext from '../Token/Token';
 import  {CustomerProvider, useCustomer} from './customer-context';
 //import {CustomerContext} from '../Price/PriceCrud';
 
 const CustomerEdit = () => {
-    const token = useContext(TokenContext);
-    const {selectedCustomer, setSelectedCustomer} = useCustomer();
-    const [customer, setCustomer] = useState(selectedCustomer);
-    const [submitting, setSubmitting] = useState(false);
+    //const token = useContext(TokenContext);
+    //const {selectedCustomer, setSelectedCustomer} = useCustomer();
+    //const [customer, setCustomer] = useState(selectedCustomer);
+    //const [submitting, setSubmitting] = useState(false);
 
     React.useEffect(() => {
+      const [customer, setCustomer] = useCustomer();
         console.log(`CustomerEdit: useEffect selectedCustomer?.email=${selectedCustomer?.email}`);
         setCustomer((prevCustomer) =>
         selectedCustomer !== undefined
@@ -33,7 +34,7 @@ const CustomerEdit = () => {
             [target.name]: target.value});
         console.log(`handleChangeCustomer: prop=${target.name}, value=${target.value}`); 
     }
- 
+ /*
     async function handleSubmit ( event ) {
         setSelectedCustomer(customer);
         console.log("handleSubmitCustomer! ", selectedCustomer);
@@ -41,12 +42,25 @@ const CustomerEdit = () => {
         //setSubmitting(true);
         if (event.preventDefault) event.preventDefault();
         //Customer(customer.id).setCustomer({customer});
-    }
+    }*/
+    const SubmitButton = React.memo(function Submit() {
+      const {saveCustomer} = useCustomer()
+      return (
+        <Button onClick={saveCustomer}
+        type="submit"
+        fullWidth
+        variant="contained"
+        sx={{ mt: 3, mb: 2 }}
+      >
+        Сохранить
+      </Button>
+      )
+    })
  return (
-    
+    <CustomerProvider> 
       <Container component="main" maxWidth="xs">
         <CssBaseline />
-          <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+          <Box component="form" noValidate sx={{ mt: 1 }}>
           <TextField
                 value={customer.name || ''} 
               margin="normal"
@@ -81,16 +95,10 @@ const CustomerEdit = () => {
               placeholder="+7"
               onChange={handleChange} 
             />
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2 }}
-            >
-              Сохранить
-            </Button>
+            <SubmitButton />
           </Box>
       </Container>
+    </CustomerProvider>
      )
  }
 

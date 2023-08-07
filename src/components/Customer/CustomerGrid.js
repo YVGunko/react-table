@@ -9,7 +9,7 @@ import api from "../http-common/http-common";
 
 import { isString, isStringInValid } from '../../utils/utils';
 import TokenContext from '../Token/Token';
-import {useCustomer} from '../Customer/customer-context';
+import {CustomerProvider, useCustomer} from '../Customer/customer-context';
 
 const columns = [
   { field: 'name', headerName: 'Наименование', width: 230 },
@@ -21,7 +21,7 @@ export default function CustomerGrid(textToSearchFor) {
   if (token === undefined) {
     throw new Error('token undefined')
   }
-  const setCustomer = useCustomer.setCustomer;
+  const setCustomer = useCustomer().setCustomer;
   const [loading, setLoading] = useState(false);
   const [rows, setRows] = useState([]);
   const [totalItems, setTotalItems] = useState(0);
@@ -89,6 +89,7 @@ export default function CustomerGrid(textToSearchFor) {
   };
 
   return (
+    <CustomerProvider>
     <Box sx={{ height: '100%', width: '100%' }}>
       <Stack direction="row" spacing={1} sx={{ mb: 1 }}>
         <DataGrid rows={rows} columns={columns} 
@@ -109,5 +110,6 @@ export default function CustomerGrid(textToSearchFor) {
         />
       </Stack>
     </Box>
+    </CustomerProvider>
   );
 }
