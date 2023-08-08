@@ -21,7 +21,7 @@ export default function CustomerGrid(textToSearchFor) {
   if (token === undefined) {
     throw new Error('token undefined')
   }
-  const setCustomer = useCustomer().setCustomer;
+  
   const [loading, setLoading] = useState(false);
   const [rows, setRows] = useState([]);
   const [totalItems, setTotalItems] = useState(0);
@@ -75,41 +75,40 @@ export default function CustomerGrid(textToSearchFor) {
     console.log(`onPaginationModelChange ${JSON.stringify(paginationModelL)}`);
     setPaginationModel({page:paginationModelL.page, pageSize: paginationModelL.pageSize});
   }
-  /*
-  function onRowSelectionModelChange (onRowSelectionModelChangeL) {
-    console.log(`onRowSelectionModelChange ${JSON.stringify(onRowSelectionModelChangeL)}`);
-    setRowSelectionModel(onRowSelectionModelChangeL);
-    customerHasChanged(onRowSelectionModelChangeL);
-  }*/
 
-  const onRowsSelectionHandler = (ids) => {
-    const selectedRowsData = ids.map((id) => rows.find((row) => row.id === id));
-    console.log(`CustomerGrid.onRowsSelectionHandler= ${selectedRowsData[0]}`);
-    setCustomer(selectedRowsData[0]);
-  };
+  const Grid = () => {
+    const {setCustomer} = useCustomer();
+    const onRowsSelectionHandler = (ids) => {
+      const selectedRowsData = ids.map((id) => rows.find((row) => row.id === id));
+      console.log(`CustomerGrid.onRowsSelectionHandler= ${selectedRowsData[0]}`);
+      setCustomer(selectedRowsData[0]);
+    };
+    return (
+      <Box sx={{ height: '100%', width: '100%' }}>
+        <Stack direction="row" spacing={1} sx={{ mb: 1 }}>
+          <DataGrid rows={rows} columns={columns} 
+          rowCount={rowCountState}
+          gridPageCountSelector
+          pageSizeOptions={[10, 25]}
+          
+          paginationMode="server"
+          paginationModel={paginationModel}
+          onPaginationModelChange={ onPaginationModelChange }
 
+          rowSelectionModel={rowSelectionModel}
+          onRowSelectionModelChange={ (ids) => onRowsSelectionHandler (ids) }
+          keepNonExistentRowsSelected
+
+          autoHeight={true}
+          loading={loading}
+          />
+        </Stack>
+      </Box>
+    )
+  }
   return (
     <CustomerProvider>
-    <Box sx={{ height: '100%', width: '100%' }}>
-      <Stack direction="row" spacing={1} sx={{ mb: 1 }}>
-        <DataGrid rows={rows} columns={columns} 
-        rowCount={rowCountState}
-        gridPageCountSelector
-        pageSizeOptions={[10, 25]}
-        
-        paginationMode="server"
-        paginationModel={paginationModel}
-        onPaginationModelChange={ onPaginationModelChange }
-
-        rowSelectionModel={rowSelectionModel}
-        onRowSelectionModelChange={ (ids) => onRowsSelectionHandler (ids) }
-        keepNonExistentRowsSelected
-
-        autoHeight={true}
-        loading={loading}
-        />
-      </Stack>
-    </Box>
+      <Grid />
     </CustomerProvider>
   );
 }

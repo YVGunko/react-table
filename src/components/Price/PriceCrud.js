@@ -14,20 +14,22 @@ import Button from '@mui/material/Button';
 import TokenContext from '../Token/Token';
 import CustomerGrid from "../Customer/CustomerGrid";
 import CustomerEdit from "../Customer/CustomerEdit";
+import {CustomerProvider, useCustomer} from '../Customer/customer-context';
 
 const PriceCrud = () => {
-  const [textToSearchFor, setTextToSearchFor] = useState("");
+  const inputRef = useRef();
   const token = useContext(TokenContext);
   const isOrderMaker = token?.roles.toLowerCase().indexOf("order_maker".toLowerCase()) !== -1 ;
 
     return (
+      <CustomerProvider>
       <div>
         <Split disable style={{ position: "static", height: '100%', border: '1px solid #d5d5d5' }}>
           <div style={{ minWidth: '35%', maxWidth: '35%', backgroundColor: '#eaeaea' }}>
           <Container component="main" maxWidth="xs">
           <CssBaseline />
             <Box component="form" sx={{ p: '2px 4px', display: 'flex', alignItems: 'center', width: 400 }}>
-              <InputBase
+              <InputBase ref={inputRef}
                 sx={{ ml: 1, flex: 1 }}
                 placeholder="Поиск клиента"
                 inputProps={{ 'aria-label': 'search google maps' }}
@@ -40,7 +42,7 @@ const PriceCrud = () => {
                 <PersonAddIcon />
               </IconButton>)}
             </Box>
-            <CustomerGrid textToSearchFor={textToSearchFor} />
+            <CustomerGrid textToSearchFor={inputRef} />
           </Container>
             
       </div>
@@ -57,6 +59,7 @@ const PriceCrud = () => {
           </div>
         </Split>
       </div>
+      </CustomerProvider>
     );
 }
 export default PriceCrud;

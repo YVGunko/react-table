@@ -13,28 +13,22 @@ import  {CustomerProvider, useCustomer} from './customer-context';
 
 const CustomerEdit = () => {
     //const token = useContext(TokenContext);
-    //const {selectedCustomer, setSelectedCustomer} = useCustomer();
+    //const {customer} = useCustomer();
     //const [customer, setCustomer] = useState(selectedCustomer);
     //const [submitting, setSubmitting] = useState(false);
-
-    React.useEffect(() => {
-      const [customer, setCustomer] = useCustomer();
-        console.log(`CustomerEdit: useEffect selectedCustomer?.email=${selectedCustomer?.email}`);
+    
+ /*
+    React.useEffect(() => {      
+        console.log(`CustomerEdit: useEffect selectedCustomer?.email=${customer?.email}`);
         setCustomer((prevCustomer) =>
-        selectedCustomer !== undefined
-            ? selectedCustomer
+        customer !== undefined
+            ? customer
             : prevCustomer,
         );
-      }, [selectedCustomer, setCustomer]);
+      }, [customer, setCustomer]);
 
-    const handleChange = event => {
-        const target = event.currentTarget;
-        setCustomer({
-          ...customer, 
-            [target.name]: target.value});
-        console.log(`handleChangeCustomer: prop=${target.name}, value=${target.value}`); 
-    }
- /*
+
+
     async function handleSubmit ( event ) {
         setSelectedCustomer(customer);
         console.log("handleSubmitCustomer! ", selectedCustomer);
@@ -45,6 +39,7 @@ const CustomerEdit = () => {
     }*/
     const SubmitButton = React.memo(function Submit() {
       const {saveCustomer} = useCustomer()
+      console.log(`CustomerEdit SubmitButton `);
       return (
         <Button onClick={saveCustomer}
         type="submit"
@@ -56,13 +51,22 @@ const CustomerEdit = () => {
       </Button>
       )
     })
- return (
-    <CustomerProvider> 
-      <Container component="main" maxWidth="xs">
+    const EditForm = React.memo(function Edit() {
+      const {customer, setCustomer} = useCustomer();
+      console.log(`CustomerEdit function Edit() value= ${customer?.name}`);
+      const handleChange = event => {
+        const target = event.currentTarget;
+        setCustomer({
+          ...customer, 
+            [target.name]: target.value});
+        console.log(`handleChangeCustomer: prop=${target.name}, value=${target.value}`); 
+    }
+      return (
+        <Container component="main" maxWidth="xs">
         <CssBaseline />
           <Box component="form" noValidate sx={{ mt: 1 }}>
           <TextField
-                value={customer.name || ''} 
+                value={customer?.name || ''} 
               margin="normal"
               required
               fullWidth
@@ -74,7 +78,7 @@ const CustomerEdit = () => {
               onChange={handleChange} 
             />
             <TextField
-                value={customer.email || ''} 
+                value={customer?.email || ''} 
               margin="normal"
               fullWidth
               id="email"
@@ -85,7 +89,7 @@ const CustomerEdit = () => {
               onChange={handleChange} 
             />
             <TextField
-                value={customer.phone || ''} 
+                value={customer?.phone || ''} 
               margin="normal"
               fullWidth
               id="phone"
@@ -98,6 +102,12 @@ const CustomerEdit = () => {
             <SubmitButton />
           </Box>
       </Container>
+      )
+    })
+    
+ return (
+    <CustomerProvider > 
+      <EditForm />
     </CustomerProvider>
      )
  }

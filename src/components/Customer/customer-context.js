@@ -6,13 +6,18 @@ import TokenContext from '../Token/Token';
 const CustomerContext = createContext()
 
 function CustomerProvider(props) {
-    const [customer, setCustomer] = useState([])
+    const customerRec = {
+      id : '0', name: 'Не выбран', phone: '+79123456789', email: 'email@email.ru',
+    }
+    const [customer, setCustomer] = useState(customerRec);
     const value = useMemo(() => {
+      console.log(`CustomerProvider customer= ${customer?.name}`);
       return {
         customer,
         setCustomer,
       }
     }, [customer])
+    console.log(`CustomerProvider value= ${value?.customer?.name}`);
     return <CustomerContext.Provider value={value} {...props} />
   }
 
