@@ -1,6 +1,6 @@
 import { baseURL } from "./baseURL";
 // General api to acces data from web
-export default function api(path,method,credentials,params){
+export default async function api(path,method,credentials,params){
 
   console.log(`http-common api path= ${path}`);
 
@@ -14,7 +14,7 @@ export default function api(path,method,credentials,params){
 
       const NO_RESPONSE_CODE = 0;
 
-      return fetch(baseURL+path, options)
+      return await fetch(baseURL+path, options)
           .then(resp => {
             if (resp.ok) {
               console.log(`http-common api to acces data from web responced Ok= ${resp?.status}`);

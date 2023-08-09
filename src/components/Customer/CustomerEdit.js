@@ -1,49 +1,54 @@
-import React, { useContext, useState } from 'react';
+import React, { useCallback, useContext, useState } from 'react';
 import Box from '@mui/material/Box';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
 import Container from '@mui/material/Container';
 import Button from '@mui/material/Button';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
+import SaveIcon from '@mui/icons-material/Save';
+import CancelIcon from '@mui/icons-material/Cancel';
+import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined';
+
 //import api from "../http-common/http-common";
 import { submitCustomer } from './Customer';
 import TokenContext from '../Token/Token';
 import {CustomerContext} from '../Price/PriceCrud';
 
-const defaultTheme = createTheme();
 const CustomerEdit = () => {
     const token = useContext(TokenContext);
-    const {selectedCustomer, setSelectedCustomer} = useContext(CustomerContext);
+    const {selectedCustomer, setSelectedCustomer, textToSearchFor, setTextToSearchFor} = useContext(CustomerContext);
     const [customer, setCustomer] = useState(selectedCustomer);
     const [submitting, setSubmitting] = useState(false);
 
     React.useEffect(() => {
-        console.log(`CustomerEdit: useEffect selectedCustomer?.email=${selectedCustomer?.email}`);
-        setCustomer((prevCustomer) =>
+        setCustomer((prevCustomer) => 
         selectedCustomer !== undefined
             ? selectedCustomer
             : prevCustomer,
         );
+        console.log(`CustomerEdit: useEffect selectedCustomer${JSON.stringify(selectedCustomer)}`);
       }, [selectedCustomer, setCustomer]);
 
     const handleChange = event => {
-        const target = event.currentTarget;
-        setCustomer({
-          ...customer, 
-            [target.name]: target.value});
-        console.log(`handleChangeCustomer: prop=${target.name}, value=${target.value}`); 
+      const target = event.currentTarget;
+      setCustomer({
+        ...customer, 
+          [target.name]: target.value});
+      //console.log(`handleChangeCustomer: ${JSON.stringify(target)}`); 
     }
- 
-    async function handleSubmit ( event ) {
-        setSelectedCustomer(customer);
-        console.log("handleSubmitCustomer! ", selectedCustomer);
-        submitCustomer (customer, token);
-        //setSubmitting(true);
-        if (event.preventDefault) event.preventDefault();
-        //Customer(customer.id).setCustomer({customer});
+    const handleCancel = event => {
+      if (event.preventDefault) event.preventDefault();
+      setCustomer(selectedCustomer);
     }
+    const handleSubmit = useCallback(( event ) => {
+      if (event.preventDefault) event.preventDefault();
+      
+      submitCustomer (customer, token).then(res => {
+        setTextToSearchFor(customer?.name)
+        console.log(`handleSubmit setTextToSearchFor = ${JSON.stringify(customer)}`);
+      });
+    }, [customer, token])
  return (
-    <ThemeProvider theme={defaultTheme}>
+
       <Container component="main" maxWidth="xs">
         <CssBaseline />
         <Box
@@ -54,7 +59,7 @@ const CustomerEdit = () => {
             alignItems: 'center',
           }}
         >
-          <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+          <Box component="form" noValidate sx={{ mt: 1 }}>
           <TextField
                 value={customer.name || ''} 
               margin="normal"
@@ -90,18 +95,24 @@ const CustomerEdit = () => {
               onChange={handleChange} 
             />
             <Button
+              type="cancel"
+              onClick={handleCancel}
+              variant="outlined" endIcon={<CancelOutlinedIcon />}
+              sx={{ mt: 3, mr: 3, mb: 2 }}
+            >
+              Отменить
+            </Button>
+            <Button
               type="submit"
-              fullWidth
-              variant="contained"
+              onClick={handleSubmit} 
+              variant="contained" endIcon={<SaveIcon />}
               sx={{ mt: 3, mb: 2 }}
             >
               Сохранить
             </Button>
           </Box>
         </Box>
-      </Container>
-    </ThemeProvider>
- 
+      </Container> 
      )
  }
 

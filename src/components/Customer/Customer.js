@@ -15,18 +15,19 @@ export async function submitCustomer ( customer, token ) {
        email: customer.email,
        phone: customer.phone, } )
   .then((resp) => {
-   console.log(`response :- ${JSON.stringify(resp?.data)}`);
+    console.log(`handleSubmitCustomer Ok: ${JSON.stringify(resp)}`);
    //setSubmitting(false);
-   return resp?.data;
+   return resp;
  })
  .catch((error) => {
     //setSubmitting(false);
-    console.log(`handleSubmitCustomer error: ${error}`);
+    console.log(`handleSubmitCustomer error: ${JSON.stringify(error)}`);
+    return error;
  });
 }
 
 export async function fetchCustomer(id, token) {
-    api(`/customers/${id}`, 'GET', token)
+    await api(`/customers/${id}`, 'GET', token)
     .then(data => {
       console.log(`useCustomer.fetchCustomer data=${data?.id}`);
       return data;

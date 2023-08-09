@@ -14,5 +14,5 @@ export function isString(x) {
  * @returns 
  */
 export const isStringInValid = (string, minLength) => {
-    return !string || !string?.trim() || !/^[a-zA-Z ]+$/.test(string) || string.length < minLength
+    return !string || !string?.trim() || !/^[a-zA-Za-åa-ö-w-я 0-9]+$/.test(string) || string.length < minLength
 }

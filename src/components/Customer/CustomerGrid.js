@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback, useRef, useContext } from "react";
+import React, { useEffect, useState, useCallback, useMemo, useContext } from "react";
 import {
   DataGrid,
 } from '@mui/x-data-grid';
@@ -12,16 +12,16 @@ import TokenContext from '../Token/Token';
 import {CustomerContext} from '../Price/PriceCrud';
 
 const columns = [
-  { field: 'name', headerName: 'Наименование', width: 230 },
+  { field: 'name', headerName: 'Наименование', headerAlign: 'center', width: 250, headerClassName: 'super-app-theme--header', },
 ];
 
 
-export default function CustomerGrid(textToSearchFor) {
+export default function CustomerGrid() {
   const token = useContext(TokenContext);
   if (token === undefined) {
     throw new Error('token undefined')
   }
-  const {customerHasChanged} = useContext(CustomerContext);
+  const {textToSearchFor, customerHasChanged} = useContext(CustomerContext);
   if (customerHasChanged === undefined) {
     throw new Error('CustomerContext  undefined')
   }
@@ -46,6 +46,8 @@ export default function CustomerGrid(textToSearchFor) {
   }, [totalItems, setRowCountState]);
 
   const getTitleUrl = useCallback(() => {
+    console.log(`CustomerGrid getTitleUrl isString(textToSearchFor) = ${isString(textToSearchFor)}`);
+    console.log(`CustomerGrid getTitleUrl !isStringInValid(textToSearchFor,1) = ${!isStringInValid(textToSearchFor,1)}`);
     if (isString(textToSearchFor) && !isStringInValid(textToSearchFor,1)) {
      return `/customers?title=${textToSearchFor}&page=${paginationModel.page}&size=${paginationModel.pageSize}`;
     } else {
@@ -79,18 +81,12 @@ export default function CustomerGrid(textToSearchFor) {
     console.log(`onPaginationModelChange ${JSON.stringify(paginationModelL)}`);
     setPaginationModel({page:paginationModelL.page, pageSize: paginationModelL.pageSize});
   }
-  /*
-  function onRowSelectionModelChange (onRowSelectionModelChangeL) {
-    console.log(`onRowSelectionModelChange ${JSON.stringify(onRowSelectionModelChangeL)}`);
-    setRowSelectionModel(onRowSelectionModelChangeL);
-    customerHasChanged(onRowSelectionModelChangeL);
-  }*/
 
-  const onRowsSelectionHandler = (ids) => {
+  const onRowsSelectionHandler = useMemo(() =>(ids) => {
     const selectedRowsData = ids.map((id) => rows.find((row) => row.id === id));
     console.log(selectedRowsData);
     customerHasChanged(selectedRowsData[0]);
-  };
+  }, [rows]);
 
   return (
     <Box sx={{ height: '100%', width: '100%' }}>
@@ -98,8 +94,7 @@ export default function CustomerGrid(textToSearchFor) {
         <DataGrid rows={rows} columns={columns} 
         rowCount={rowCountState}
         gridPageCountSelector
-        pageSizeOptions={[10, 25]}
-        
+        pageSizeOptions={[10]}
         paginationMode="server"
         paginationModel={paginationModel}
         onPaginationModelChange={ onPaginationModelChange }
