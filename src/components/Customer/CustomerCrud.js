@@ -25,7 +25,7 @@ import CustomerGrid from "../Customer/CustomerGrid";
 import CustomerEdit from "../Customer/CustomerEdit";
 import {fetchCustomer} from "../Customer/Customer";
 import {isString, removeSpecials, isStringInValid } from '../../utils/utils';
-import OrderCrud from "../Order/OrderCrud";
+import OrderBox from "../Order/order-context";
 
 export const CustomerContext = createContext({});
 CustomerContext.displayName = 'CustomerContext';
@@ -111,7 +111,7 @@ const CustomerCrud = () => {
               <CustomerEdit />
             </div>
             <div>
-              <OrderCrud />
+              <OrderBox />
 
             </div>
           </Split>
