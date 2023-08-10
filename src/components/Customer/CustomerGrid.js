@@ -9,7 +9,7 @@ import api from "../http-common/http-common";
 
 import { isString, isStringInValid } from '../../utils/utils';
 import TokenContext from '../Token/Token';
-import {CustomerContext} from '../Price/PriceCrud';
+import {CustomerContext} from './CustomerCrud';
 
 const columns = [
   { field: 'name', headerName: 'Наименование', headerAlign: 'center', width: 250, headerClassName: 'super-app-theme--header', },

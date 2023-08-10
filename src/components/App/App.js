@@ -2,6 +2,7 @@ import React from 'react';
 import "bootstrap/dist/css/bootstrap.min.css";
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { StyledEngineProvider } from '@mui/material/styles';
 
 import Login from '../Login/Login';
 import TokenContext from '../Token/Token';
@@ -13,16 +14,27 @@ import {orderPath, pricePath} from '../http-common/baseURL';
 
 
 function App() {
-  const defaultTheme = createTheme();
+  const defaultTheme = createTheme({
+    palette: {
+      background: {
+        paper: '#fff',
+      },
+
+      action: {
+        active: '#001E3C',
+      },
+
+    },
+  });
+  
   const { token, setToken } = useToken();
   if(!token) {
     return <Login setToken={setToken} />
   }
   
   return (
-    <ThemeProvider theme={defaultTheme}>
+    <StyledEngineProvider injectFirst>
     <TokenContext.Provider value={token}>
-    <div style={{ height: '100vh', width: '100vw', position: 'absolute', left: '0px', overflow: 'hidden'}}>
       <BrowserRouter>
         <NavigationBar token={token} />
         <Switch>
@@ -37,9 +49,9 @@ function App() {
           </Route>
         </Switch>
       </BrowserRouter>
-    </div>
+
     </TokenContext.Provider>
-    </ThemeProvider>
+    </StyledEngineProvider>
   );
 }
 

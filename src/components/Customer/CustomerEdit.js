@@ -11,7 +11,7 @@ import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined';
 //import api from "../http-common/http-common";
 import { submitCustomer } from './Customer';
 import TokenContext from '../Token/Token';
-import {CustomerContext} from '../Price/PriceCrud';
+import {CustomerContext} from './CustomerCrud';
 
 const CustomerEdit = () => {
     const token = useContext(TokenContext);
@@ -69,7 +69,6 @@ const CustomerEdit = () => {
               label="Наименование клиента"
               name="name"
               placeholder="name"
-              autoFocus
               onChange={handleChange} 
             />
             <TextField

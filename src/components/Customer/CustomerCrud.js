@@ -1,255 +1,124 @@
-import React, { useEffect, useState, useCallback, useRef, useContext } from "react";
-import 'bootstrap/dist/css/bootstrap.min.css';
-import { Button, Col, Container, Form, Row } from "react-bootstrap";
-import api from "../http-common/http-common";
-import CustomerList from "./CustomerList";
-import CustomerModal from "./CustomerModal";
-import CustomerEditButton from "./CustomerEditButton";
-import TokenContext from '../Token/Token';
-import { baseURL } from "../http-common/baseURL";
-import { encode } from "base-64";
-import Split from '@uiw/react-split';
+import React, { useReducer, useState, useCallback, useRef, useContext, createContext } from "react";
 
-//const api = require("../http-common/http-common");
+import Split from '@uiw/react-split';
+import IconButton from '@mui/material/IconButton';
+import CssBaseline from '@mui/material/CssBaseline';
+import InputBase from '@mui/material/InputBase';
+import Container from '@mui/material/Container';
+import Box from '@mui/material/Box';
+import SearchIcon from '@mui/icons-material/Search';
+import PersonSearchOutlinedIcon from '@mui/icons-material/PersonSearchOutlined';
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import Divider from '@mui/material/Divider';
+import Button from '@mui/material/Button';
+import TextField from '@mui/material/TextField';
+
+import {
+  useWindowSize,
+  useWindowWidth,
+  useWindowHeight,
+} from '@react-hook/window-size'
+
+import TokenContext from '../Token/Token';
+
+import CustomerGrid from "../Customer/CustomerGrid";
+import CustomerEdit from "../Customer/CustomerEdit";
+import {fetchCustomer} from "../Customer/Customer";
+import {isString, removeSpecials, isStringInValid } from '../../utils/utils';
+import OrderCrud from "../Order/OrderCrud";
+
+export const CustomerContext = createContext({});
+CustomerContext.displayName = 'CustomerContext';
 
 const CustomerCrud = () => {
-/* state definition  */
+  //const inputRef = useRef(null);
+  const [scrnWidth, scrnHeight] = useWindowSize();
+  let NavbarHeight = 100;
   const token = useContext(TokenContext);
   const isOrderMaker = token?.roles.toLowerCase().indexOf("order_maker".toLowerCase()) !== -1 ;
-
-  const [showCustomerModal, setShowCustomerModal] = useState(false);
-
-  const handleShowCustomerModal = (e) => {
-    if (e.preventDefault) e.preventDefault();
-    console.log(`handleShowCustomerModal = ${showCustomerModal}`);
-    setShowCustomerModal(showCustomerModal => !showCustomerModal);
-  }
-
-  const [customers, setCustomers] = useState([]);
-  const [totalItems, setTotalItems] = useState(0);
-  const [totalPages, setTotalPages] = useState(0);
-  const [currentPage, setCurrentPage] = useState(0);
+  const [selectedCustomer, setSelectedCustomer] = useState([]);
+  const [valid, setValid] = useState(false);
+  const [input, setInput] = useState("");
   const [textToSearchFor, setTextToSearchFor] = useState("");
-  const [page, setPage] = useState(0);
-  const [submitting, setSubmitting] = useState(false);
 
-  const [customer, setCustomer ] = useState({
-    name: textToSearchFor ? textToSearchFor : '',
-    phone: '',
-    email: '',
-    id: '',
-  }, [textToSearchFor]);
-
-  const getTitleUrl = useCallback(() => {
-    //if (!!(page)) page = 0;
-    if (textToSearchFor) {
-      console.log(`getTitleUrl, /customers?title=${textToSearchFor}&page=${page}&size=10`);
-      return `/customers?title=${textToSearchFor}&page=${page}&size=10`;
-    } else {
-      console.log(`getTitleUrl, /customers?page=${page}&size=10`);
-      return `/customers?page=${page}&size=10`;
-    }
-  }, [textToSearchFor, page]);
-
-
-  function usePrevious(value) {
-    console.log(`usePrevious. wanted to print customer.name: ${customer.name} `);
-    console.log(`usePrevious ${value} `);
-    const ref = useRef();
-    useEffect(() => {
-      ref.current = value; //assign the value of ref to the argument
-    },[value]); //this code will run when the value of 'value' changes
-    return ref.current; //in the end, return the current ref value.
+  function customerHasChanged(row) {
+    console.log(`customerHasChanged =${row?.id}, ${row?.email}`);
+    setSelectedCustomer(row);
   };
-  const prevTextToSearchFor = usePrevious(textToSearchFor);
-  //const prevPage = usePrevious(page);
-  
-
-  const fetchData = useCallback(async () => {
-    console.log(`fetchData Url=${getTitleUrl()}`);
-    return api(getTitleUrl(), 'GET', token)
-    .then(data => {
-      setCustomers(data.customers);
-      setTotalItems(data.totalItems);
-      setTotalPages(data.totalPages);
-      setCurrentPage(data.currentPage);
-    })
-
-  }, [getTitleUrl,token]);
-
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
-
-  /* beging handlers */
-  /* newOrder 
-  const handleNewOrder = event => {
-    if (event.preventDefault) event.preventDefault();
-    console.log('handleNewOrder');
-    newOrder();
-    //close CustomerModal if open
-    //open NewOrderModal
-  }*/
-  async function handleNewOrder(id) {
-    //if (event.preventDefault) event.preventDefault();
-    console.log(`newOrder for customer.id=${id}`);
-    //await api.post(`/customers/orders/${id}`)
-    await api(`/customers/orders/${id}`, 'POST', token)
-    .then((data) => {
-      console.log("response :- ",data);
-      setCustomer({
-          ...customer, 
-            id: data.id,
-            name: data.name,
-            email: data.email,
-            phone: data.phone});
-       setSubmitting(false);
-       //console.log(`handleSubmitCustomer: id=${customer.id}, name=${customer.name}, phone=${customer.phone}`);
-    })
-    .catch((error) => {
-       setSubmitting(false);
-       alert(error);
-    });
-
-  }
-  /* newOrder end */
-
-  const nextPage =(event) => {
-    console.log(`nextPage would be = ${page+parseInt(event.target.value, 10)}`);
-    setPage(page+parseInt(event.target.value, 10));
+  function inputHasChanged(event) {
     event.preventDefault();
+    //console.log(`inputHasChanged =${inputRef.current.value}`);
+    //setTextToSearchFor(inputRef.current.value);
+    setTextToSearchFor(textToSearchFor);
+  };
+  function personAdd(event) {
+    event.preventDefault();
+    //console.log(`personAdd =${inputRef.current.value}`);
+    //setSelectedCustomer({id:'new', name: inputRef.current.value, email:"", phone:""});
+    setSelectedCustomer({id:'new', name: textToSearchFor, email:"", phone:""});
+  };
+  const handleValidation = (e) => {
+    setValid((isString(e.target.value) && !isStringInValid(e.target.value,1)));
+    setInput(removeSpecials(e.target.value));
+  };
+  const onBlurValidateFormat = (e) => {
+    console.log(`onBlurValidateFormat `);
+    const value = e.target.value;
+    const regex = /([a-zA-Z]{4})+-([0-9]{3})+([a-zA-Z]{2})+$/g;
+    if (!value.match(regex)) {
+      //Show an error message or put a warning text under the input and set flag to prevent form submit
+    }
   }
   const textToSearchForChange =(event) => {
     console.log(`event.target.value is set to = ${event.target.value}`);
     setTextToSearchFor(event.target.value);
-    console.log(`textToSearchFor is set to = ${textToSearchFor}, prevTextToSearchFor was = ${prevTextToSearchFor}`);
-
-    if (prevTextToSearchFor !== event.target.value) {
-      setPage(0);
-      console.log(`prevTextToSearchFor !== textToSearchFor -> nextPage would be = ${page}`);
-    }
 
     if (event.preventDefault) event.preventDefault();
   }
+    return (
+      <div>
+        <CustomerContext.Provider value={{selectedCustomer, setSelectedCustomer, customerHasChanged, textToSearchFor, setTextToSearchFor, }}>
+        <Split style={{ position: "static", minHeight: scrnHeight-NavbarHeight, height: '100%', border: '1px solid #d5d5d5' }}>
+        <Container component="main" maxWidth="xs">
+          <CssBaseline />
+            <Box component="form" onSubmit={inputHasChanged} sx={{ p: '2px 4px', display: 'flex', alignItems: 'center', width: '100%' }}>
+              <InputBase 
+                value={textToSearchFor}
+                onChange={textToSearchForChange}
+                variant="standard"
+                sx={{ ml: 1, flex: 1 }}
+                placeholder="Поиск клиента"
+                autoFocus
+                color="primary"
+              />
+              <IconButton type="button" sx={{ p: '10px' }} aria-label="search" onClick={inputHasChanged} >
+                <PersonSearchOutlinedIcon />
+              </IconButton>
+              <Divider sx={{ height: "90%", m: 1 }} orientation="vertical" />
+              {isOrderMaker && (<IconButton color="primary" sx={{ p: '10px' }} aria-label="personAdd" onClick={personAdd}>
+                <PersonAddIcon />
+              </IconButton>)}
+            </Box>
+            <div style={{ width: '100%' }}>
+            <CustomerGrid  />
+          </div>
+          </Container>
 
-  async function handleSubmitCustomer ( event ) {
-    console.log("SUBMITTED! ", customer);
-    setSubmitting(true);
-    if (event.preventDefault) event.preventDefault();
-     await api.post("/customers", 
-     JSON.stringify({
-         id:"new",
-         name: customer.name,
-         email: customer.email,
-         phone: customer.phone,
-    }) ).then((resp) => {
-     console.log("response :- ",resp);
-     setCustomer({
-         ...customer, 
-           id: resp.data.id,
-           name: resp.data.name,
-           email: resp.data.email,
-           phone: resp.data.phone});
-      setSubmitting(false);
-      //console.log(`handleSubmitCustomer: id=${customer.id}, name=${customer.name}, phone=${customer.phone}`);
-   })
-   .catch((error) => {
-      setSubmitting(false);
-      alert(error);
-   });
-}
-const handleChangeCustomer = event => {
-  const target = event.currentTarget;
-  console.log(`handleChangeCustomer: id=${customer.id}, name=${customer.name}, phone=${customer.phone}`);
-  setCustomer({
-    ...customer, 
-      [target.name]: target.value});
-}
 
-const callCustomerModal = () => {
-  return (
-    <CustomerModal 
-      show={showCustomerModal} 
-      setShow={setShowCustomerModal} 
-      customer={customer} 
-      handleChangeCustomer={handleChangeCustomer}
-      handleSubmitCustomer={handleSubmitCustomer}
-      handleNewOrder={handleNewOrder}
-      header="Новый клиент" 
-      submitting={submitting}
-      />);
-}
-  /* end handlers */
+          <div style={{ flex: 1 }}>
+          <Split disable mode="vertical">
+            <div>
+              <CustomerEdit />
+            </div>
+            <div>
+              <OrderCrud />
 
-/* jsx */
-  return (
-    <>
-    <div >
-    <Split disable style={{ maxHeight: '100%', border: '1px solid #d5d5d5', borderRadius: 3 }}>
-    <div style={{ maxWidth: '40%' }}>
-      <form>
-      <Container className="mt-4">
-      <Row>
-        <Col sm={8}>
-          <Form className="d-flex">
-            <Form.Control
-              type="search"
-              placeholder="Search"
-              className="me-2"
-              aria-label="Search"
-              value={textToSearchFor}
-              onChange={textToSearchForChange}
-            />
-            <Button variant="outline-primary">
-              Поиск
-            </Button>
-          </Form>
-        </Col>
-        {isOrderMaker && (<Col sm={4}>
-        <Button variant="outline-warning" onClick={callCustomerModal}>
-              Создать
-            </Button>
-        </Col>)}
-      </Row>
-    </Container>
-      </form>
-      <CustomerList
-        customers={customers}
-          editEmployee={handleShowCustomerModal}
-          handleNewOrder={handleNewOrder}
-          show={showCustomerModal} 
-          setShow={setShowCustomerModal} 
-          handleChangeCustomer={handleChangeCustomer}
-          handleSubmitCustomer={handleSubmitCustomer}
-      />
-          <form>
-    <div>
-          <button disabled={page === 0} className="btn btn-primary m-4" value={-1} onClick={nextPage}>
-          {page}
-          </button>
-          <button disabled={page === parseInt(totalPages-1, 10)} className="btn btn-primary m-4" value={1} onClick={nextPage}>
-          {totalPages}
-          </button>
-
-          <CustomerEditButton caption="New Customer" onClick={handleShowCustomerModal}/>
-
-        </div>
-    </form>
-    </div>
-    <div style={{ flex: 1 }}>
-      <Split disable mode="vertical">
-        <div style={{ height: 100, maxHeight: '30%' }}>
-          Top Pane
-        </div>
-        <div style={{ maxHeight: '70%' }}>
-          Bottom Pane
-        </div>
-      </Split>
+            </div>
+          </Split>
+          </div>
+        </Split>
+        </CustomerContext.Provider>
       </div>
-    </Split>
-    </div>
-    </>
-  );
-};
-
+    );
+}
 export default CustomerCrud;
