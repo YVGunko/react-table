@@ -51,12 +51,14 @@ const OrderProvider = (props) => {
     );
   };
 
-  const Orders = (props) => {
+  const Orders = ({selectedCustomer, ...props}) => {
     const context = useContext(OrderContext);
+
     return (
         <div className="user">
-        <h1 className="profile-userName">{props.selectedCustomer?.id}</h1>
+        <h1 className="profile-userName">{selectedCustomer?.id}</h1>
         <p className="profile-fullName">({context.orderInfo.details})</p>
+        <p className="profile-fullName">({context.fetchedData?.orders})</p>
         <OrdersTopBox />
         <OrdersGridBox />
       </div>
@@ -64,16 +66,17 @@ const OrderProvider = (props) => {
     );
   };
 
-  const OrdersTopBox = () => {
+  const OrdersTopBox = (props) => {
     const context = useContext(OrderContext);
     return (
       <div className="user">
         <h1 className="profile-userName">{context.orderInfo?.id}</h1>
         <p className="profile-fullName">({context.fetchedData?.totalItems})</p>
+        <p className="profile-fullName">({context.fetchedData?.orders})</p>
       </div>
     );
   };
-  const OrdersGridBox = () => {
+  const OrdersGridBox = (props) => {
     const context = useContext(OrderContext);
     const [loading, setLoading] = useState(false);
     const [paginationModel, setPaginationModel] = React.useState({ page: 0, pageSize: 10, });
