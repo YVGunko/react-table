@@ -12,7 +12,7 @@ const OrderProvider = (props) => {
     const orderInformation = {
         id: "",
         comment: "",
-        details: "",
+        details: "details",
         customer_id: "",
         division_code: "",
         division_name: "",
@@ -27,7 +27,7 @@ const OrderProvider = (props) => {
             { field: 'details', headerName: 'Содежание...', headerAlign: 'center', width: 120,  },
         ],
         changeNamedProperty: (property, value) => {
-            setOrderInfo({ ...orderInfo, [property]: value.orderInfo });
+            setOrderInfo({ ...orderInfo, [property]: value });
         },
     };
     const fetchedOrdersData = {
