@@ -75,6 +75,7 @@ export default function CustomerGrid() {
 
   useEffect(() => {
     fetchData();
+    console.log(`CustomerGrid useEffect ${JSON.stringify(rows)}`);
   }, [fetchData]);
 
   function onPaginationModelChange (paginationModelL) {

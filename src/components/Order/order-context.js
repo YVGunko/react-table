@@ -8,77 +8,56 @@ import { CustomerContext } from '../Customer/CustomerCrud';
 import useOrder from './useOrder'
 
 const OrderContext = React.createContext();
-const OrderProvider = (props) => {
-    const orderInformation = {
-        id: "",
-        comment: "",
-        details: "details",
-        customer_id: "",
-        division_code: "",
-        division_name: "",
-        user_id: "",
-        user_name: "",
-        sample: true,
-        date: "",
-
+/*const OrderProvider = (props) => {
+    console.log(`OrderProvider ${JSON.stringify(props.value)}`);
+    const fetchedOrdersData = {
         columnsForDataGrid : [
             { field: 'id', headerName: '№ заказа', headerAlign: 'center', width: 100 },
             { field: 'division_name', headerName: 'Подразделение', headerAlign: 'center', width: 120,  },
             { field: 'details', headerName: 'Содежание...', headerAlign: 'center', width: 120,  },
         ],
-        changeNamedProperty: (property, value) => {
-            setOrderInfo({ ...orderInfo, [property]: value });
-        },
-    };
-    const fetchedOrdersData = {
-        rows: [],
-        totalItems: 0,
-        totalPages: 0,
+
+        rows: props.value ? props.value?.orders : [],
+        totalItems: props.value ? props.value?.totalItems :0,
+        totalPages: 10,
         currentPage: 0,
 
-        setValues: (fetchedData) => {
-            console.log(`setValues ${JSON.stringify(fetchedData)}`);
-            setFetchedData({rows:fetchedData?.orders ? fetchedData.orders : [], 
-                totalItems:fetchedData?.totalItems ? fetchedData.totalItems : 0});
+        setValues: (value) => {
+            console.log(`setValues ${JSON.stringify(value)}`);
+            setFetchedData({rows:value?.orders ? value.orders : [], 
+                totalItems:value?.totalItems ? value.totalItems : 0});
         }
     }
     const [fetchedData, setFetchedData] = useState(fetchedOrdersData);
-    const [orderInfo, setOrderInfo] = useState(orderInformation);
     return (
-      <OrderContext.Provider value={{orderInfo, fetchedData}}>
+      <OrderContext.Provider value={{fetchedData}}>
         {props.children}
       </OrderContext.Provider>
     );
-  };
+  };*/
 
-  const Orders = ({selectedCustomer, ...props}) => {
-    const context = useContext(OrderContext);
+  const columnsForDataGrid = [
+        { field: 'id', headerName: '№ заказа', headerAlign: 'center', width: 100 },
+        { field: 'division_name', headerName: 'Подразделение', headerAlign: 'center', width: 120,  },
+        { field: 'details', headerName: 'Содежание...', headerAlign: 'center', width: 240,  },
+    ];
 
-    return (
-        <div className="user">
-        <h1 className="profile-userName">{selectedCustomer?.id}</h1>
-        <p className="profile-fullName">({context.orderInfo.details})</p>
-        <p className="profile-fullName">({context.fetchedData?.orders})</p>
-        <OrdersTopBox />
-        <OrdersGridBox />
-      </div>
-      
-    );
-  };
-
-  const OrdersTopBox = (props) => {
+  const OrdersTopBox = () => {
     const context = useContext(OrderContext);
     return (
       <div className="user">
-        <h1 className="profile-userName">{context.orderInfo?.id}</h1>
-        <p className="profile-fullName">({context.fetchedData?.totalItems})</p>
-        <p className="profile-fullName">({context.fetchedData?.orders})</p>
+
       </div>
     );
   };
-  const OrdersGridBox = (props) => {
+  const OrdersGridBox = (data) => {
+
+    console.log(`OrdersGridBox ${JSON.stringify(data.data?.orders)}`);
     const context = useContext(OrderContext);
+
     const [loading, setLoading] = useState(false);
+    const [rows, setRows] = useState([]);
+    //const [data, setData] = useState([]);
     const [paginationModel, setPaginationModel] = React.useState({ page: 0, pageSize: 10, });
     function onPaginationModelChange (paginationModelL) {
         console.log(`onPaginationModelChange ${JSON.stringify(paginationModelL)}`);
@@ -87,23 +66,24 @@ const OrderProvider = (props) => {
 
     const [rowSelectionModel, setRowSelectionModel] = React.useState([]);
     const onRowsSelectionHandler = useMemo(() =>(ids) => {
-        const selectedRowsData = ids.map((id) => context.fetchedData.rows.find((row) => row.id === id));
+        const selectedRowsData = ids.map((id) => data.orders.find((row) => row.id === id));
         console.log(`onRowsSelectionHandler ${selectedRowsData}`);
         //customerHasChanged(selectedRowsData[0]);
-      }, [context.fetchedData.rows]);
-
+      }, [data.orders]);
+/*
     useEffect(() => {
-        console.log(`order-context useEffect useOrder.fetchedData`);
-        /*const data = useOrder.fetchedData;
-        if (!data) { data = useOrder.fakeData; }*/
-        context.fetchedData.setValues(useOrder.fetchedData ? useOrder.fetchedData : useOrder.fakeData);
-    }, [useOrder.fetchedData]);
+        
+        
+        console.log(`order-context useEffect useOrder.fetchedData ${JSON.stringify(data ? data.orders : [])}`);
+        setData(data ? data.orders : []);
+        //context.fetchedData.setValues();
+    }, [selectedCustomer]);*/
 
     return (
         <Box sx={{ height: '100%', width: '100%' }}>
           <Stack direction="row" spacing={1} sx={{ mb: 1 }}>
-            <DataGrid rows={ context.fetchedData.rows}  columns={ context.orderInfo?.columnsForDataGrid } 
-            rowCount={ context.fetchedData?.totalItems }
+            <DataGrid rows={ data.data?.orders ? data.data?.orders : []}  columns={ columnsForDataGrid } 
+            rowCount={ data.data?.totalItems ? data.data?.totalItems : 0 }
             gridPageCountSelector
             pageSizeOptions={[10]}
             paginationMode="server"
@@ -121,15 +101,17 @@ const OrderProvider = (props) => {
         </Box>
       );
     }
+
 const OrderBox = () => {
-    const {selectedCustomer} = useContext(CustomerContext);
+    //const {selectedCustomer} = useContext(CustomerContext);
     
     const data = useOrder().fetchedData ;
-    console.log(`OrderBox  useOrder().fetchedData ${JSON.stringify(data)}`);
-    return (        
-        <OrderProvider fetchedData={data}>
-            <Orders selectedCustomer={selectedCustomer}/>
-        </OrderProvider>
+    //console.log(`OrderBox  useOrder().fetchedData ${JSON.stringify(data)}`);
+    return (       
+        <> 
+            <OrdersTopBox />
+            <OrdersGridBox data={data}/>
+        </>
     )
 };
 
