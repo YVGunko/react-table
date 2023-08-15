@@ -23,6 +23,8 @@ import TokenContext from '../Token/Token';
 
 import CustomerGrid from "../Customer/CustomerGrid";
 import CustomerEdit from "../Customer/CustomerEdit";
+import CustomerDialog from "../Customer/CustomerDialog";
+import CustomizedDialog from "../Customer/CustomizedDialog";
 import {fetchCustomer} from "../Customer/Customer";
 import {isString, removeSpecials, isStringInValid } from '../../utils/utils';
 import OrderBox from "../Order/order-context";
@@ -56,6 +58,10 @@ const CustomerCrud = () => {
     //console.log(`personAdd =${inputRef.current.value}`);
     //setSelectedCustomer({id:'new', name: inputRef.current.value, email:"", phone:""});
     setSelectedCustomer({id:'new', name: textToSearchFor, email:"", phone:""});
+    return (
+      <CustomerDialog >
+      </CustomerDialog>
+    )
   };
   const handleValidation = (e) => {
     setValid((isString(e.target.value) && !isStringInValid(e.target.value,1)));
@@ -80,8 +86,9 @@ const CustomerCrud = () => {
         <CustomerContext.Provider value={{selectedCustomer, setSelectedCustomer, customerHasChanged, textToSearchFor, setTextToSearchFor, }}>
         <Split style={{ position: "static", minHeight: scrnHeight-NavbarHeight, height: '100%', border: '1px solid #d5d5d5' }}>
         <Container component="main" maxWidth="xs">
-          <CssBaseline />
+          <CssBaseline enableColorScheme />
             <Box component="form" onSubmit={inputHasChanged} sx={{ p: '2px 4px', display: 'flex', alignItems: 'center', width: '100%' }}>
+              <CustomizedDialog/><CustomerDialog/>
               <InputBase 
                 value={textToSearchFor}
                 onChange={textToSearchForChange}

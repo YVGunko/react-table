@@ -38,35 +38,12 @@ export const  OrderContext = React.createContext();
         { field: 'date', type: 'Date', headerName: 'Дата', headerAlign: 'center', width: 120, headerClassName: 'super-app-theme--header', },
         { field: 'division_name', headerName: 'Подразделение', headerAlign: 'center', width: 120, headerClassName: 'super-app-theme--header', },
         { field: 'details', headerName: 'Содежание...', headerAlign: 'center', width: 240, headerClassName: 'super-app-theme--header', },
-        {
-            field: 'action',
-            headerName: 'Action',
-            headerAlign: 'center',
-            headerClassName: 'super-app-theme--header',
-            width: 180,
-            sortable: false,
-            disableClickEventBubbling: true,
-            
-            renderCell: (params) => {
-                const onClick = (e) => {
-                  const currentRow = params.row;
-                  return alert(JSON.stringify(currentRow, null, 4));
-                };
-                
-                return (
-                  <Stack direction="row" spacing={2}>
-                    <Button variant="outlined" color="warning" size="small" onClick={onClick}>Edit</Button>
-                    <Button variant="outlined" color="error" size="small" onClick={onClick}>Delete</Button>
-                  </Stack>
-                );
-            },
-          },
           {
             field: "fiction",
             headerName: "fiction",
             sortable: false,
             renderCell: ({ row }) =>
-              <Button onClick={() => yourActionFunction(row)}>
+              <Button onClick={() => yourActionFunction(row)}  variant="outlined" color="warning" size="small">
                 Action
               </Button>,
           },
