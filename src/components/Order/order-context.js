@@ -37,9 +37,11 @@ const OrderContext = React.createContext();
   };*/
 
   const columnsForDataGrid = [
-        { field: 'id', headerName: '№ заказа', headerAlign: 'center', width: 100 },
-        { field: 'division_name', headerName: 'Подразделение', headerAlign: 'center', width: 120,  },
-        { field: 'details', headerName: 'Содежание...', headerAlign: 'center', width: 240,  },
+        { field: 'id', headerName: '№ заказа', headerAlign: 'center', width: 100, headerClassName: 'super-app-theme--header', },
+        { field: 'date', headerName: 'Дата', headerAlign: 'center', width: 120, headerClassName: 'super-app-theme--header', },
+        { field: 'division_name', headerName: 'Подразделение', headerAlign: 'center', width: 120, headerClassName: 'super-app-theme--header', },
+        { field: 'details', headerName: 'Содежание...', headerAlign: 'center', width: 240, headerClassName: 'super-app-theme--header', },
+        { field: 'sample', headerName: 'Образцы', headerAlign: 'center', width: 40, headerClassName: 'super-app-theme--header', },
     ];
 
   const OrdersTopBox = () => {
@@ -66,10 +68,10 @@ const OrderContext = React.createContext();
 
     const [rowSelectionModel, setRowSelectionModel] = React.useState([]);
     const onRowsSelectionHandler = useMemo(() =>(ids) => {
-        const selectedRowsData = ids.map((id) => data.orders.find((row) => row.id === id));
+        const selectedRowsData = ids.map((id) => data.data.orders.find((row) => row.id === id));
         console.log(`onRowsSelectionHandler ${selectedRowsData}`);
         //customerHasChanged(selectedRowsData[0]);
-      }, [data.orders]);
+      }, [data.data.orders]);
 /*
     useEffect(() => {
         
@@ -80,7 +82,12 @@ const OrderContext = React.createContext();
     }, [selectedCustomer]);*/
 
     return (
-        <Box sx={{ height: '100%', width: '100%' }}>
+        <Box sx={{ height: '100%', width: '100%' ,
+        '& .super-app-theme--header': {
+          backgroundColor: 'primary.light',
+        },
+
+        }}>
           <Stack direction="row" spacing={1} sx={{ mb: 1 }}>
             <DataGrid rows={ data.data?.orders ? data.data?.orders : []}  columns={ columnsForDataGrid } 
             rowCount={ data.data?.totalItems ? data.data?.totalItems : 0 }
@@ -106,7 +113,7 @@ const OrderBox = () => {
     //const {selectedCustomer} = useContext(CustomerContext);
     
     const data = useOrder().fetchedData ;
-    //console.log(`OrderBox  useOrder().fetchedData ${JSON.stringify(data)}`);
+    console.log(`OrderBox  useOrder().fetchedData ${JSON.stringify(data)}`);
     return (       
         <> 
             <OrdersTopBox />
