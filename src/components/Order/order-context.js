@@ -3,47 +3,78 @@ import { useForm } from "react-hook-form";
 import { DataGrid, } from '@mui/x-data-grid';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
+import CheckIcon from '@mui/icons-material/Check';
+import CloseIcon from '@mui/icons-material/Close';
+import Button from '@mui/material/Button';
 
-import { CustomerContext } from '../Customer/CustomerCrud';
 import useOrder from './useOrder'
 
-const OrderContext = React.createContext();
-/*const OrderProvider = (props) => {
-    console.log(`OrderProvider ${JSON.stringify(props.value)}`);
-    const fetchedOrdersData = {
-        columnsForDataGrid : [
-            { field: 'id', headerName: '№ заказа', headerAlign: 'center', width: 100 },
-            { field: 'division_name', headerName: 'Подразделение', headerAlign: 'center', width: 120,  },
-            { field: 'details', headerName: 'Содежание...', headerAlign: 'center', width: 120,  },
-        ],
-
-        rows: props.value ? props.value?.orders : [],
-        totalItems: props.value ? props.value?.totalItems :0,
-        totalPages: 10,
-        currentPage: 0,
-
-        setValues: (value) => {
-            console.log(`setValues ${JSON.stringify(value)}`);
-            setFetchedData({rows:value?.orders ? value.orders : [], 
-                totalItems:value?.totalItems ? value.totalItems : 0});
-        }
-    }
-    const [fetchedData, setFetchedData] = useState(fetchedOrdersData);
-    return (
-      <OrderContext.Provider value={{fetchedData}}>
-        {props.children}
-      </OrderContext.Provider>
-    );
-  };*/
-
+export const  OrderContext = React.createContext();
   const columnsForDataGrid = [
-        { field: 'id', headerName: '№ заказа', headerAlign: 'center', width: 100, headerClassName: 'super-app-theme--header', },
-        { field: 'date', headerName: 'Дата', headerAlign: 'center', width: 120, headerClassName: 'super-app-theme--header', },
+    {
+        field: 'sample',
+        headerName: 'Образцы',
+        type: 'boolean',
+        width: 100,
+        headerClassName: 'super-app-theme--header',
+        editable: false,
+        renderCell: (params) => {
+          return params.value ? (
+            <CheckIcon
+              style={{
+                color: 'primary.main',
+              }}
+            />
+          ) : (
+            <CloseIcon
+              style={{
+                color: 'super-app-theme--header',
+              }}
+            />
+          );
+        },
+      },
+        { field: 'id', type: 'string', headerName: '№ заказа', headerAlign: 'center', width: 100, headerClassName: 'super-app-theme--header', },
+        { field: 'date', type: 'Date', headerName: 'Дата', headerAlign: 'center', width: 120, headerClassName: 'super-app-theme--header', },
         { field: 'division_name', headerName: 'Подразделение', headerAlign: 'center', width: 120, headerClassName: 'super-app-theme--header', },
         { field: 'details', headerName: 'Содежание...', headerAlign: 'center', width: 240, headerClassName: 'super-app-theme--header', },
-        { field: 'sample', headerName: 'Образцы', headerAlign: 'center', width: 40, headerClassName: 'super-app-theme--header', },
+        {
+            field: 'action',
+            headerName: 'Action',
+            headerAlign: 'center',
+            headerClassName: 'super-app-theme--header',
+            width: 180,
+            sortable: false,
+            disableClickEventBubbling: true,
+            
+            renderCell: (params) => {
+                const onClick = (e) => {
+                  const currentRow = params.row;
+                  return alert(JSON.stringify(currentRow, null, 4));
+                };
+                
+                return (
+                  <Stack direction="row" spacing={2}>
+                    <Button variant="outlined" color="warning" size="small" onClick={onClick}>Edit</Button>
+                    <Button variant="outlined" color="error" size="small" onClick={onClick}>Delete</Button>
+                  </Stack>
+                );
+            },
+          },
+          {
+            field: "fiction",
+            headerName: "fiction",
+            sortable: false,
+            renderCell: ({ row }) =>
+              <Button onClick={() => yourActionFunction(row)}>
+                Action
+              </Button>,
+          },
     ];
 
+    function yourActionFunction (row) {
+        return alert(JSON.stringify(row, null, 4));
+    }
   const OrdersTopBox = () => {
     const context = useContext(OrderContext);
     return (
@@ -54,13 +85,13 @@ const OrderContext = React.createContext();
   };
   const OrdersGridBox = (data) => {
 
-    console.log(`OrdersGridBox ${JSON.stringify(data.data?.orders)}`);
-    const context = useContext(OrderContext);
+    console.log(`OrdersGridBox ${JSON.stringify(data.data?.currentPage)}`);
+    const {paginationModel, setPaginationModel} = useContext(OrderContext);
 
     const [loading, setLoading] = useState(false);
     const [rows, setRows] = useState([]);
     //const [data, setData] = useState([]);
-    const [paginationModel, setPaginationModel] = React.useState({ page: 0, pageSize: 10, });
+    
     function onPaginationModelChange (paginationModelL) {
         console.log(`onPaginationModelChange ${JSON.stringify(paginationModelL)}`);
         setPaginationModel({page:paginationModelL.page, pageSize: paginationModelL.pageSize});
@@ -72,14 +103,6 @@ const OrderContext = React.createContext();
         console.log(`onRowsSelectionHandler ${selectedRowsData}`);
         //customerHasChanged(selectedRowsData[0]);
       }, [data.data.orders]);
-/*
-    useEffect(() => {
-        
-        
-        console.log(`order-context useEffect useOrder.fetchedData ${JSON.stringify(data ? data.orders : [])}`);
-        setData(data ? data.orders : []);
-        //context.fetchedData.setValues();
-    }, [selectedCustomer]);*/
 
     return (
         <Box sx={{ height: '100%', width: '100%' ,
@@ -92,7 +115,7 @@ const OrderContext = React.createContext();
             <DataGrid rows={ data.data?.orders ? data.data?.orders : []}  columns={ columnsForDataGrid } 
             rowCount={ data.data?.totalItems ? data.data?.totalItems : 0 }
             gridPageCountSelector
-            pageSizeOptions={[10]}
+            pageSizeOptions={[5]}
             paginationMode="server"
             paginationModel={paginationModel}
             onPaginationModelChange={ onPaginationModelChange }
@@ -111,14 +134,14 @@ const OrderContext = React.createContext();
 
 const OrderBox = () => {
     //const {selectedCustomer} = useContext(CustomerContext);
-    
-    const data = useOrder().fetchedData ;
-    console.log(`OrderBox  useOrder().fetchedData ${JSON.stringify(data)}`);
+    const [paginationModel, setPaginationModel] = React.useState({ page: 0, pageSize: 5, });
+    const data = useOrder(paginationModel).fetchedData ;
+    if (data) { console.log(`OrderBox  useOrder().fetchedData currentPage ${JSON.stringify(data.currentPage)}`); }
     return (       
-        <> 
+        <OrderContext.Provider value = { { paginationModel, setPaginationModel } }> 
             <OrdersTopBox />
-            <OrdersGridBox data={data}/>
-        </>
+            {data && (<OrdersGridBox data={data}/>)}
+        </OrderContext.Provider >
     )
 };
 

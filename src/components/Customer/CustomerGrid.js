@@ -12,7 +12,7 @@ import TokenContext from '../Token/Token';
 import {CustomerContext} from './CustomerCrud';
 
 const columns = [
-  { field: 'name', headerName: 'Наименование', headerAlign: 'center', width: 250, headerClassName: 'super-app-theme--header', },
+  { field: 'name', headerName: 'Наименование', headerAlign: 'center', width: 250, headerClassName: 'grid-col--header', },
 ];
 
 
@@ -90,7 +90,10 @@ export default function CustomerGrid() {
   }, [rows]);
 
   return (
-    <Box sx={{ height: '100%', width: '100%' }}>
+    <Box sx={{ height: '100%', width: '100%' ,
+    '& .grid-col--header': {
+      backgroundColor: 'primary.light',
+    },}}>
       <Stack direction="row" spacing={1} sx={{ mb: 1 }}>
         <DataGrid rows={rows} columns={columns} 
         rowCount={rowCountState}
