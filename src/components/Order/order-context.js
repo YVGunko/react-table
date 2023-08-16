@@ -1,20 +1,19 @@
-import React, { useContext, useState, useMemo, useEffect } from 'react';
-import { useForm } from "react-hook-form";
+import React, { useContext, useState, useMemo} from 'react';
 import { DataGrid, } from '@mui/x-data-grid';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import { styled } from '@mui/material/styles';
-import Avatar from '@mui/material/Avatar';
 import Typography from '@mui/material/Typography';
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
 import SendOutlinedIcon from '@mui/icons-material/SendOutlined';
-import PlaylistAddCheckOutlinedIcon from '@mui/icons-material/PlaylistAddCheckOutlined';
+import AddCardOutlinedIcon from '@mui/icons-material/AddCardOutlined';
 import IconButton from '@mui/material/IconButton';
 
 import useOrder from './useOrder';
 import {CustomerContext} from '../Customer/CustomerCrud';
+import OrderDialog from './OrderDialog';
 
 export const  OrderContext = React.createContext();
   const Item = styled(Paper)(({ theme }) => ({
@@ -59,34 +58,27 @@ export const  OrderContext = React.createContext();
             headerName: "",
             sortable: false,
             renderCell: ({ row }) =>
-              <SendOutlinedIcon onClick={() => yourActionFunction(row)}  variant="outlined" color="primary" size="small">
-                Action
-              </SendOutlinedIcon>,
+              <IconButton  onClick={() => sendOrderByEmail(row)}  variant="outlined" color="primary" size="small">
+                <SendOutlinedIcon />
+              </IconButton >,
           },
     ];
-
-    function yourActionFunction (row) {
+//TODO
+    function sendOrderByEmail (row) {
         return alert(JSON.stringify(row, null, 4));
     }
+
   const OrdersTopBox = () => {
     const {selectedCustomer} = useContext(OrderContext);
     const message = `Заказы клиента: ${selectedCustomer ? selectedCustomer.name : "Клиент не выбран"}`;
-    const handleClickOpen = () => {
 
-    }
     return (
       <div className="user">
       <Stack direction="row" spacing={2}>
-      <Item>
-          <Avatar>W</Avatar>
-        </Item>
         <Item>
           <Typography noWrap>{message}</Typography>
         </Item>
-
-        <IconButton color="primary" sx={{ p: '10px' }} aria-label="playlistAddCheckOutlinedIcon" onClick={handleClickOpen}>
-                <PlaylistAddCheckOutlinedIcon />
-        </IconButton>
+        <OrderDialog />
       </Stack>
       </div>
     );

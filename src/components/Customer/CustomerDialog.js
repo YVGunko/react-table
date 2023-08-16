@@ -8,12 +8,13 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import IconButton from '@mui/material/IconButton';
 import AccountBoxOutlinedIcon from '@mui/icons-material/AccountBoxOutlined';
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
 
 import { submitCustomer } from './Customer';
 import TokenContext from '../Token/Token';
 import { CustomerContext } from './CustomerCrud';
 
-export default function CustomerDialog() {
+export default function CustomerDialog({children}) {
   const [open, setOpen] = React.useState(false);
   const token = React.useContext(TokenContext);
   const {selectedCustomer, setSelectedCustomer, textToSearchFor, setTextToSearchFor} = React.useContext(CustomerContext);
@@ -59,11 +60,14 @@ export default function CustomerDialog() {
 
   return (
     <div>
-        <IconButton color="primary" sx={{ p: '10px' }} aria-label="personAdd" onClick={handleClickOpen}>
+        {!children && (<IconButton color="primary" sx={{ p: '10px' }} aria-label="personAdd" onClick={handleClickOpen}>
                 <AccountBoxOutlinedIcon />
-        </IconButton>
+        </IconButton>)}
+        {children && (<IconButton color="primary" sx={{ p: '10px' }} aria-label="personAdd" onClick={handleClickOpen}>
+                <PersonAddIcon />
+        </IconButton>)}
       <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>Данные клиента</DialogTitle>
+        <DialogTitle>{children ? children : "No children"}</DialogTitle>
         <DialogContent>
           <DialogContentText>
             Введите данные клиента.

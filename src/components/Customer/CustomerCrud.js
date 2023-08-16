@@ -60,6 +60,7 @@ const CustomerCrud = () => {
     setSelectedCustomer({id:'new', name: textToSearchFor, email:"", phone:""});
     return (
       <CustomerDialog >
+        personAdd
       </CustomerDialog>
     )
   };
@@ -101,7 +102,9 @@ const CustomerCrud = () => {
                 <PersonSearchOutlinedIcon />
               </IconButton>
               <Divider sx={{ height: "90%", m: 1 }} orientation="vertical" />
-              {isOrderMaker && (<CustomerDialog/>)}
+              {isOrderMaker && (<CustomerDialog >
+                                  Новый клиент
+                                </CustomerDialog>)}
             </Box>
             <div style={{ width: '100%' }}>
             <CustomerGrid  />
