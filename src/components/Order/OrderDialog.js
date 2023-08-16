@@ -22,13 +22,14 @@ import CloseIcon from '@mui/icons-material/Close';
 import AddCardOutlinedIcon from '@mui/icons-material/AddCardOutlined';
 import { teal, grey } from "@mui/material/colors";
 import useDivision from "../Division/useDivision";
+import useComment from "./useComment";
 
 const style = {
     position: 'absolute',
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    width: 800,
+    width: 400,
     bgcolor: 'background.paper',
     border: '2px solid #000',
     boxShadow: 24,
@@ -46,16 +47,15 @@ const style = {
       };
 
     const divisions = useDivision().fetchedData;
+    const comments = useComment().comments;
 
     const { control, handleSubmit } = useForm({
+      reValidateMode : 'onBlur',
         defaultValues: {
             "id": "",
             "comment": "",
-            "customer_id": "",
-            "division_code": "",
-            "division_name": "...",
-            "user_id": "",
-            "user_name": "",
+            "division":{"division_code": "0",
+            "division_name": "..."},
             "sample": false,
             "date": ""
         }
@@ -71,13 +71,39 @@ const style = {
                 <AddCardOutlinedIcon />
         </IconButton>)}
         <Modal open={open} onClose={handleClose} >
-          <Box sx={{ ...style, width: 800 }} component="form" onSubmit={handleSubmit(onSubmit)}>
-            <Grid container spacing={3}>
-                {divisions && (<Grid item xs={6}>
+          <Box sx={{ ...style, width: 400 }} component="form" onSubmit={handleSubmit(onSubmit)}>
+            <Grid container spacing={6}>
+              {comments && (<Grid item xs={12}>
+                <Controller
+                  control={control}
+                  name="comment"
+                  defaultValue={comments[0]}
+                  rules={{required : true,}}
+                  render={({ field: { ref, onChange, ...field } }) => (
+                    <Autocomplete
+                      options={comments}
+                      onChange={(_, data) => onChange(data)}
+                      defaultValue={comments[0]}
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          {...field}
+                          fullWidth
+                          inputRef={ref}
+                          variant="filled"
+                          label="Заказ создан: "
+                        />
+                      )}
+                    />
+                  )}
+                />
+                </Grid>)}
+                {divisions && (<Grid item xs={12}>
                     <Controller
                     control={control}
                     name="division"
                     defaultValue={[divisions[0]]}
+                    rules={{required : true,}}
                     render={({ field: { ref, onChange, ...field } }) => (
                         <Autocomplete
                             options={divisions}
