@@ -10,11 +10,12 @@ import api from "../http-common/http-common";
 import { isString, isStringInValid } from '../../utils/utils';
 import TokenContext from '../Token/Token';
 import {CustomerContext} from './CustomerCrud';
+import CustomerDialog from "../Customer/CustomerDialog";
 
-const columns = [
-  { field: 'name', headerName: 'Наименование', headerAlign: 'center', width: 250, headerClassName: 'grid-col--header', },
-];
 
+/*<Button onClick={() => yourActionFunction(row)}  variant="outlined" color="warning" size="small">
+Action
+</Button>,*/
 
 export default function CustomerGrid() {
   const token = useContext(TokenContext);
@@ -25,6 +26,20 @@ export default function CustomerGrid() {
   if (customerHasChanged === undefined) {
     throw new Error('CustomerContext  undefined')
   }
+
+  const isOrderMaker = token?.roles.toLowerCase().indexOf("order_maker".toLowerCase()) !== -1 ;
+  console.log(`CustomerGrid isOrderMaker = ${isOrderMaker}`);
+
+  const columns = [
+    { field: 'name', headerName: 'Наименование', headerAlign: 'center', width: 250, headerClassName: 'grid-col--header', },
+    {
+      field: "control",
+      headerName: "",
+      sortable: false,
+      renderCell: ({ row }) =>
+        <CustomerDialog/>  
+    },
+  ];
 
   const [loading, setLoading] = useState(false);
   const [rows, setRows] = useState([]);

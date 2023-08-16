@@ -6,6 +6,8 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
+import IconButton from '@mui/material/IconButton';
+import AccountBoxOutlinedIcon from '@mui/icons-material/AccountBoxOutlined';
 
 import { submitCustomer } from './Customer';
 import TokenContext from '../Token/Token';
@@ -25,7 +27,7 @@ export default function CustomerDialog() {
   const handleClose = () => {
     setOpen(false);
   };
-
+    //TODO useMemo ?
   React.useEffect(() => {
     setCustomer((prevCustomer) => 
     selectedCustomer !== undefined
@@ -57,9 +59,9 @@ export default function CustomerDialog() {
 
   return (
     <div>
-      <Button variant="outlined" onClick={handleClickOpen}>
-        Open form dialog
-      </Button>
+        <IconButton color="primary" sx={{ p: '10px' }} aria-label="personAdd" onClick={handleClickOpen}>
+                <AccountBoxOutlinedIcon />
+        </IconButton>
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle>Данные клиента</DialogTitle>
         <DialogContent>
@@ -67,7 +69,8 @@ export default function CustomerDialog() {
             Введите данные клиента.
           </DialogContentText>
             <TextField
-                    value={customer.name || ''} 
+                value={customer.name || ''} 
+                autoFocus
                 margin="normal"
                 required
                 fullWidth
@@ -89,8 +92,7 @@ export default function CustomerDialog() {
                 onChange={handleChange} 
                 />
             <TextField
-                value={customer.email || ''} 
-                autoFocus
+                value={customer.email || ''}          
                 margin="dense"
                 fullWidth
                 variant="standard"
@@ -103,7 +105,7 @@ export default function CustomerDialog() {
             />
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose}>Отменить</Button>
+          <Button onClick={handleCancel}>Отменить</Button>
           <Button onClick={handleSubmit}>Сохранить</Button>
           <Button onClick={handleClose}>Закрыть</Button>
         </DialogActions>

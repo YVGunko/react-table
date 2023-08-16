@@ -24,7 +24,7 @@ import TokenContext from '../Token/Token';
 import CustomerGrid from "../Customer/CustomerGrid";
 import CustomerEdit from "../Customer/CustomerEdit";
 import CustomerDialog from "../Customer/CustomerDialog";
-import CustomizedDialog from "../Customer/CustomizedDialog";
+
 import {fetchCustomer} from "../Customer/Customer";
 import {isString, removeSpecials, isStringInValid } from '../../utils/utils';
 import OrderBox from "../Order/order-context";
@@ -88,7 +88,6 @@ const CustomerCrud = () => {
         <Container component="main" maxWidth="xs">
           <CssBaseline enableColorScheme />
             <Box component="form" onSubmit={inputHasChanged} sx={{ p: '2px 4px', display: 'flex', alignItems: 'center', width: '100%' }}>
-              <CustomizedDialog/><CustomerDialog/>
               <InputBase 
                 value={textToSearchFor}
                 onChange={textToSearchForChange}
@@ -102,9 +101,7 @@ const CustomerCrud = () => {
                 <PersonSearchOutlinedIcon />
               </IconButton>
               <Divider sx={{ height: "90%", m: 1 }} orientation="vertical" />
-              {isOrderMaker && (<IconButton color="primary" sx={{ p: '10px' }} aria-label="personAdd" onClick={personAdd}>
-                <PersonAddIcon />
-              </IconButton>)}
+              {isOrderMaker && (<CustomerDialog/>)}
             </Box>
             <div style={{ width: '100%' }}>
             <CustomerGrid  />
@@ -113,12 +110,12 @@ const CustomerCrud = () => {
 
 
           <div style={{ flex: 1 }}>
-          <Split disable mode="vertical">
-            <div>
-              <CustomerEdit />
-            </div>
+          <Split mode="vertical">
             <div>
               <OrderBox />
+            </div>
+            <div>
+              
 
             </div>
           </Split>
