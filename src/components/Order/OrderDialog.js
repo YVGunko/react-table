@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import { useForm, Controller } from "react-hook-form";
 import {
     Autocomplete,
@@ -23,6 +23,7 @@ import AddCardOutlinedIcon from '@mui/icons-material/AddCardOutlined';
 import { teal, grey } from "@mui/material/colors";
 import useDivision from "../Division/useDivision";
 import useComment from "./useComment";
+import {CustomerContext} from '../Customer/CustomerCrud';
 
 const style = {
     position: 'absolute',
@@ -48,6 +49,10 @@ const style = {
 
     const divisions = useDivision().fetchedData;
     const comments = useComment().comments;
+    const {selectedCustomer} = useContext(CustomerContext);
+    const {} = useContext(OrderContext);
+    const orderId = `Заказ клиента: ${selectedCustomer ? selectedCustomer.name : "Клиент не выбран"}`;
+
 
     const { control, handleSubmit } = useForm({
       reValidateMode : 'onBlur',
@@ -60,11 +65,16 @@ const style = {
             "date": ""
         }
       });
-      const onSubmit = data => console.log(data);
+    const onSubmit = data => console.log(data);
     
     const [open, setOpen] = React.useState(false);
 
-  
+    const inputHelper = {
+      box : {
+        required : "Должно быть заполнено",
+        pattern : "Заполнено не верно"
+      } 
+    }
     return (
       <div>
         {divisions && (<IconButton color="primary" sx={{ p: '10px' }} aria-label="orderAdd" onClick={handleOpen} title="Cоздать заказ">
@@ -73,17 +83,21 @@ const style = {
         <Modal open={open} onClose={handleClose} >
           <Box sx={{ ...style, width: 400 }} component="form" onSubmit={handleSubmit(onSubmit)}>
             <Grid container spacing={6}>
+              <Grid item xs={12}>
+                <Typography noWrap>{orderId}</Typography>
+              </Grid>
               {comments && (<Grid item xs={12}>
                 <Controller
                   control={control}
                   name="comment"
                   defaultValue={comments[0]}
                   rules={{required : true,}}
-                  render={({ field: { ref, onChange, ...field } }) => (
+                  render={({ field: { ref, onChange, ...field },
+                    fieldState: { error } }) => (
                     <Autocomplete
                       options={comments}
                       onChange={(_, data) => onChange(data)}
-                      defaultValue={comments[0]}
+
                       renderInput={(params) => (
                         <TextField
                           {...params}
@@ -92,38 +106,44 @@ const style = {
                           inputRef={ref}
                           variant="filled"
                           label="Заказ создан: "
+                          error = {error !== undefined}
+                          helperText = { error ? inputHelper.box[error.type] : ""}
                         />
                       )}
                     />
                   )}
                 />
                 </Grid>)}
-                {divisions && (<Grid item xs={12}>
-                    <Controller
-                    control={control}
-                    name="division"
-                    defaultValue={[divisions[0]]}
-                    rules={{required : true,}}
-                    render={({ field: { ref, onChange, ...field } }) => (
-                        <Autocomplete
-                            options={divisions}
-                            getOptionLabel={(divisions) => divisions.division_name}
-                            onChange={(_, data) => onChange(data)}
-                            renderInput={(params) => (
-                                <TextField
-                                {...field}
-                                {...params}
-                                fullWidth
-                                inputRef={ref}
-                                variant="filled"
-                                label="Подразделение"
-                                />
-                            )}
-                        />
-                    )}
-                    />
+              {divisions && (<Grid item xs={12}>
+                  <Controller
+                  control={control}
+                  name="division"
+                  defaultValue={ [ divisions[0] ] }
+                  rules={{required : true,}}
+                  render={({ field: { ref, onChange, ...field },
+                    fieldState: { error } }) => (
+                      <Autocomplete
+                          options={divisions}
+                          getOptionLabel={(divisions) => divisions.division_name}
+                          
+                          onChange={(_, data) => onChange(data)}
+                          renderInput={(params) => (
+                              <TextField
+                              {...field}
+                              {...params}
+                              fullWidth
+                              inputRef={ref}
+                              variant="filled"
+                              label="Подразделение"
+                              error = {error !== undefined}
+                              helperText = { error ? inputHelper.box[error.type] : ""}
+                              />
+                          )}
+                      />
+                  )}
+                  />
                 </Grid>)}
-                <Grid item xs={6}>
+                <Grid item xs={12}>
                     <Controller
                     control={control}
                     name="sample"
@@ -138,10 +158,12 @@ const style = {
                     )}
                     />
                 </Grid>
-                <Grid item xs={12}>
-                    <Button type="submit">Submit</Button>
+                <Grid item xs={6}>
+                    <Button type="submit">Сохранить</Button>
                 </Grid>
-
+                <Grid item xs={6}>
+                    <Button type="close">Закрыть</Button>
+                </Grid>
             </Grid >
           </Box>
         </Modal>
