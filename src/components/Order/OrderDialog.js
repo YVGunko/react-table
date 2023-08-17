@@ -23,6 +23,7 @@ import AddCardOutlinedIcon from '@mui/icons-material/AddCardOutlined';
 import { teal, grey } from "@mui/material/colors";
 import useDivision from "../Division/useDivision";
 import useComment from "./useComment";
+import { OrderContext } from "./order-context";
 import {CustomerContext} from '../Customer/CustomerCrud';
 
 const style = {
@@ -50,8 +51,9 @@ const style = {
     const divisions = useDivision().fetchedData;
     const comments = useComment().comments;
     const {selectedCustomer} = useContext(CustomerContext);
-    const {} = useContext(OrderContext);
-    const orderId = `Заказ клиента: ${selectedCustomer ? selectedCustomer.name : "Клиент не выбран"}`;
+    const {selectedOrderData, setSelectedOrderData} = useContext(OrderContext);
+    const customer = `Клиент : ${selectedCustomer ? selectedCustomer.name : "Не выбран"}`;
+    const order = `Заказ : ${selectedOrderData ? selectedCustomer.id : "Новый"}`;
 
 
     const { control, handleSubmit } = useForm({
@@ -84,7 +86,10 @@ const style = {
           <Box sx={{ ...style, width: 400 }} component="form" onSubmit={handleSubmit(onSubmit)}>
             <Grid container spacing={6}>
               <Grid item xs={12}>
-                <Typography noWrap>{orderId}</Typography>
+                <Typography noWrap>{customer}</Typography>
+              </Grid>
+              <Grid item xs={12}>
+                <Typography noWrap>{order}</Typography>
               </Grid>
               {comments && (<Grid item xs={12}>
                 <Controller

@@ -14,6 +14,7 @@ import IconButton from '@mui/material/IconButton';
 import useOrder from './useOrder';
 import {CustomerContext} from '../Customer/CustomerCrud';
 import OrderDialog from './OrderDialog';
+import { isObjectEmpty } from "../../utils/utils";
 
 export const  OrderContext = React.createContext();
   const Item = styled(Paper)(({ theme }) => ({
@@ -41,13 +42,8 @@ export const  OrderContext = React.createContext();
                 color: "primary",
               }}
             />
-          ) : (
-            <CloseIcon
-              style={{
-                color: 'super-app-theme--header',
-              }}
-            />
-          );
+          ) : <></>
+          
         },
       },
         { field: 'id', type: 'string', headerName: '№ заказа', headerAlign: 'center', width: 100, headerClassName: 'super-app-theme--header', },
@@ -69,38 +65,51 @@ export const  OrderContext = React.createContext();
     }
 
   const OrdersTopBox = () => {
-    const {selectedCustomer} = useContext(OrderContext);
+    const {selectedCustomer, selectedOrderData} = useContext(OrderContext);
     const message = `Заказы клиента: ${selectedCustomer ? selectedCustomer.name : "Клиент не выбран"}`;
-
+console.log(`OrdersTopBox selectedOrderData = ${JSON.stringify(selectedOrderData)}`)
+    
     return (
       <div className="user">
       <Stack direction="row" spacing={2}>
         <Item>
           <Typography noWrap>{message}</Typography>
         </Item>
-        <OrderDialog />
+        {!isObjectEmpty (selectedCustomer) && (<OrderDialog />)}
       </Stack>
       </div>
     );
   };
   const OrdersGridBox = (data) => {
 
-    console.log(`OrdersGridBox ${JSON.stringify(data.data?.currentPage)}`);
-    const {paginationModel, setPaginationModel} = useContext(OrderContext);
+    console.log(`OrdersGridBox ${JSON.stringify(data.data?.orders).substring(1,20)}`);
+    const {paginationModel, setPaginationModel, 
+      selectedOrderData, setSelectedOrderData} = useContext(OrderContext);
 
     const [loading, setLoading] = useState(false);
    
     function onPaginationModelChange (paginationModelL) {
         console.log(`onPaginationModelChange ${JSON.stringify(paginationModelL)}`);
+        
         setPaginationModel({page:paginationModelL.page, pageSize: paginationModelL.pageSize});
       }
 
+/*    React.useEffect(() => {
+      setRowCountState((prevRowCountState) =>
+      totalItems !== undefined
+          ? totalItems
+          : prevRowCountState,
+      );
+    }, [totalItems, setRowCountState]);*/
+
     const [rowSelectionModel, setRowSelectionModel] = React.useState([]);
     const onRowsSelectionHandler = useMemo(() =>(ids) => {
-        const selectedRowsData = ids.map((id) => data.data.orders.find((row) => row.id === id));
-        console.log(`onRowsSelectionHandler ${selectedRowsData}`);
+      let selOrderData = ids.map((id) => data.data.orders.find((row) => row.id === id)) ;
+      console.log(`rowSelectionModel ${JSON.stringify(selOrderData)}`);
+      setRowSelectionModel(selOrderData[0]);
+      setSelectedOrderData(selOrderData[0]);
         //customerHasChanged(selectedRowsData[0]);
-      }, [data.data.orders]);
+      }, [ data.data.orders]);
 
     return (
         <Box sx={{ height: '100%', width: '100%' ,
@@ -120,8 +129,7 @@ export const  OrderContext = React.createContext();
     
             rowSelectionModel={rowSelectionModel}
             onRowSelectionModelChange={ (ids) => onRowsSelectionHandler (ids) }
-            keepNonExistentRowsSelected
-    
+
             autoHeight={true}
             loading={loading}
             />
@@ -133,10 +141,13 @@ export const  OrderContext = React.createContext();
 const OrderBox = () => {
     const {selectedCustomer} = useContext(CustomerContext);
     const [paginationModel, setPaginationModel] = React.useState({ page: 0, pageSize: 5, });
+    const [selectedOrderData, setSelectedOrderData] = React.useState({});
     const data = useOrder(paginationModel).fetchedData ;
-    if (data) { console.log(`OrderBox  useOrder().fetchedData currentPage ${JSON.stringify(data.currentPage)}`); }
+    if (data) { console.log(`OrderBox  useOrder().fetchedData currentPage ${JSON.stringify(data.orders).substring(1,10)}`); }
     return (       
-        <OrderContext.Provider value = { { paginationModel, setPaginationModel, selectedCustomer } }> 
+        <OrderContext.Provider 
+          value = { { paginationModel, setPaginationModel, 
+            selectedCustomer, selectedOrderData, setSelectedOrderData } }> 
             <OrdersTopBox />
             {data && (<OrdersGridBox data={data}/>)}
         </OrderContext.Provider >

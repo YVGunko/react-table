@@ -37,3 +37,12 @@ export function removeSpecials(str) {
   }
   return res;
 }
+
+/**
+ * Check if Object is empty 
+ * @param objectName  
+ * @returns 
+ */
+export const isObjectEmpty = (objectName) => {
+    return Object.keys(objectName).length === 0
+  }
