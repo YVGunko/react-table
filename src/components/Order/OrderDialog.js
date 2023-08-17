@@ -24,7 +24,10 @@ import { teal, grey } from "@mui/material/colors";
 import useDivision from "../Division/useDivision";
 import useComment from "./useComment";
 import { OrderContext } from "./order-context";
+import { orderService } from "./orderService";
 import {CustomerContext} from '../Customer/CustomerCrud';
+import {isObjectEmpty} from '..utils/utils';
+import TokenContext from '../Token/Token';
 
 const style = {
     position: 'absolute',
@@ -54,20 +57,37 @@ const style = {
     const {selectedOrderData, setSelectedOrderData} = useContext(OrderContext);
     const customer = `Клиент : ${selectedCustomer ? selectedCustomer.name : "Не выбран"}`;
     const order = `Заказ : ${selectedOrderData ? selectedCustomer.id : "Новый"}`;
-
+    const isAddMode = isObjectEmpty(selectedOrderData);
+    const token = useContext(TokenContext);
 
     const { control, handleSubmit } = useForm({
       reValidateMode : 'onBlur',
         defaultValues: {
             "id": "",
             "comment": "",
-            "division":{"division_code": "0",
-            "division_name": "..."},
+            "details": "",
+            "division_code": "",
+            "division_name": "",
+            "user_id": token.id,
+            "user_name": "",
             "sample": false,
             "date": ""
         }
       });
-    const onSubmit = data => console.log(data);
+    const onSubmit = data => {
+      console.log(data);
+      return isAddMode
+          ? createOrder(data)
+          : updateOrder(id, data);
+    }
+    function createOrder(data) {
+      return orderService.create(data, token)
+          .then(() => {
+              alertService.success('User added', { keepAfterRouteChange: true });
+              history.push('.');
+          })
+          .catch(alertService.error);
+    }
     
     const [open, setOpen] = React.useState(false);
 
@@ -122,7 +142,7 @@ const style = {
               {divisions && (<Grid item xs={12}>
                   <Controller
                   control={control}
-                  name="division"
+                  name="division_code"
                   defaultValue={ [ divisions[0] ] }
                   rules={{required : true,}}
                   render={({ field: { ref, onChange, ...field },
@@ -131,7 +151,7 @@ const style = {
                           options={divisions}
                           getOptionLabel={(divisions) => divisions.division_name}
                           
-                          onChange={(_, data) => onChange(data)}
+                          onChange={(_, data) => onChange(data.division_code)}
                           renderInput={(params) => (
                               <TextField
                               {...field}
