@@ -1,4 +1,5 @@
 import React, { useContext, useState, useMemo} from 'react';
+import { createPortal } from 'react-dom';
 import { DataGrid, } from '@mui/x-data-grid';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
@@ -15,6 +16,7 @@ import useOrder from './useOrder';
 import {CustomerContext} from '../Customer/CustomerCrud';
 import OrderDialog from './OrderDialog';
 import { isObjectEmpty } from "../../utils/utils";
+import CustomerDialog from "../Customer/CustomerDialog";
 
 export const  OrderContext = React.createContext();
   const Item = styled(Paper)(({ theme }) => ({
@@ -50,24 +52,51 @@ export const  OrderContext = React.createContext();
         { field: 'date', type: 'Date', headerName: 'Дата', headerAlign: 'center', width: 120, headerClassName: 'super-app-theme--header', },
         { field: 'division_name', headerName: 'Подразделение', headerAlign: 'center', width: 120, headerClassName: 'super-app-theme--header', },
         { field: 'details', headerName: 'Содежание...', headerAlign: 'center', width: 240, headerClassName: 'super-app-theme--header', },
-        { field: "control",
+        { field: "edit",
+            width: 40,
             headerName: "",
             sortable: false,
             renderCell: ({ row }) =>
-              <IconButton  onClick={() => sendOrderByEmail(row)}  variant="outlined" color="primary" size="small">
-                <SendOutlinedIcon />
+              <IconButton onClick={(event) => openOrderDialog(event, row)} variant="outlined" color="primary" size="small">
+                <AddCardOutlinedIcon />
               </IconButton >,
           },
+          { field: "send",
+          width: 40,
+          headerName: "",
+          sortable: false,
+          renderCell: ({ row }) =>
+            <IconButton onClick={(event) => sendOrderByEmail(event, row)}  variant="outlined" color="primary" size="small">
+              <SendOutlinedIcon />
+            </IconButton >,
+        },
+
     ];
 //TODO
-    function sendOrderByEmail (row) {
+    const handleActionColmunClick = (event) => {
+      event.stopPropagation();
+      console.log(`order-context handleActionColmunClick `)
+    };
+    function sendOrderByEmail (event, row) {
+        event.stopPropagation();
         return alert(JSON.stringify(row, null, 4));
     }
+    function openOrderDialog (event, row) {
+      event.stopPropagation();
+      console.log(`order-context openOrderDialog `)
+      alert(JSON.stringify(row, null, 4));
+      return (
+         <>
+            {createPortal( <OrderDialog order = { row } extOpen = { true } />, document.body )}
+             
+         </>
+      )
+  }
 
   const OrdersTopBox = () => {
     const {selectedCustomer, selectedOrderData} = useContext(OrderContext);
     const message = `Заказы клиента: ${selectedCustomer ? selectedCustomer.name : "Клиент не выбран"}`;
-console.log(`OrdersTopBox selectedOrderData = ${JSON.stringify(selectedOrderData)}`)
+    console.log(`order-context OrdersTopBox `)
     
     return (
       <div className="user">
@@ -82,7 +111,7 @@ console.log(`OrdersTopBox selectedOrderData = ${JSON.stringify(selectedOrderData
   };
   const OrdersGridBox = (data) => {
 
-    console.log(`OrdersGridBox ${JSON.stringify(data.data?.orders).substring(1,20)}`);
+    console.log(`OrdersGridBox ${JSON.stringify(data.data?.orders).substring(1,70)}`);
     const {paginationModel, setPaginationModel, 
       selectedOrderData, setSelectedOrderData} = useContext(OrderContext);
 

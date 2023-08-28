@@ -44,5 +44,5 @@ export function removeSpecials(str) {
  * @returns 
  */
 export const isObjectEmpty = (objectName) => {
-    return Object.keys(objectName).length === 0
+    return objectName && Object.keys(objectName).length === 0
   }

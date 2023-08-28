@@ -20,8 +20,14 @@ export default function CustomerDialog({children}) {
   const {selectedCustomer, setSelectedCustomer, textToSearchFor, setTextToSearchFor} = React.useContext(CustomerContext);
   const [customer, setCustomer] = React.useState(selectedCustomer);
   const [submitting, setSubmitting] = React.useState(false);
-
+  const data = {
+    name: '',
+    phone: '',
+    email: '',
+    id: '',
+  };
   const handleClickOpen = () => {
+    if (children) setCustomer (data) ;
     setOpen(true);
   };
 

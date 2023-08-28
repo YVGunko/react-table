@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, setValue } from "react";
 import { useForm, Controller } from "react-hook-form";
 import {
     Autocomplete,
@@ -26,7 +26,7 @@ import useComment from "./useComment";
 import { OrderContext } from "./order-context";
 import { orderService } from "./orderService";
 import {CustomerContext} from '../Customer/CustomerCrud';
-import {isObjectEmpty} from '..utils/utils';
+import { isObjectEmpty } from "../../utils/utils";
 import TokenContext from '../Token/Token';
 
 const style = {
@@ -43,53 +43,29 @@ const style = {
     pb: 3,
   };
 
-  export default function OrderDialog() {
+  export default function OrderDialog( inputedOrder, extOpen ) {
+    const [open, setOpen] = React.useState(extOpen ? extOpen : false);
+    const [order, setOrder] = React.useState(inputedOrder ? inputedOrder : {});
+    console.log(`OrderDialog order = ${JSON.stringify(order)}, extOpen = ${extOpen}`)
+    const isAddMode = isObjectEmpty(order);
+
     const handleOpen = () => {
-        setOpen(true);
-      };
-      const handleClose = () => {
-        setOpen(false);
-      };
+      setOpen(true);
+    };
+    const handleClose = () => {
+      setOpen(false);
+    };
 
     const divisions = useDivision().fetchedData;
     const comments = useComment().comments;
     const {selectedCustomer} = useContext(CustomerContext);
-    const {selectedOrderData, setSelectedOrderData} = useContext(OrderContext);
+    //const {selectedOrderData, setSelectedOrderData} = useContext(OrderContext);
     const customer = `Клиент : ${selectedCustomer ? selectedCustomer.name : "Не выбран"}`;
-    const order = `Заказ : ${selectedOrderData ? selectedCustomer.id : "Новый"}`;
-    const isAddMode = isObjectEmpty(selectedOrderData);
-    const token = useContext(TokenContext);
-
-    const { control, handleSubmit } = useForm({
-      reValidateMode : 'onBlur',
-        defaultValues: {
-            "id": "",
-            "comment": "",
-            "details": "",
-            "division_code": "",
-            "division_name": "",
-            "user_id": token.id,
-            "user_name": "",
-            "sample": false,
-            "date": ""
-        }
-      });
-    const onSubmit = data => {
-      console.log(data);
-      return isAddMode
-          ? createOrder(data)
-          : updateOrder(id, data);
-    }
-    function createOrder(data) {
-      return orderService.create(data, token)
-          .then(() => {
-              alertService.success('User added', { keepAfterRouteChange: true });
-              history.push('.');
-          })
-          .catch(alertService.error);
-    }
     
-    const [open, setOpen] = React.useState(false);
+    //console.log(`OrderDialog order = ${JSON.stringify(order)}`)
+    
+    const orderTitle = `Заказ : ${isObjectEmpty(order) ? "Новый" : order.id}`;
+    const token = useContext(TokenContext);
 
     const inputHelper = {
       box : {
@@ -97,6 +73,69 @@ const style = {
         pattern : "Заполнено не верно"
       } 
     }
+    /*      "id": "",
+      "comment": "",
+      "details": "",
+      "division_code": "",
+      "division_name": "",
+      "user_id": token.id,
+      "user_name": "",
+      "sample": false,
+      "date": "" */
+    const orderOne = {
+        "id": String,
+        "comment": String,
+        "division_code": String,
+        "sample": Boolean,
+      }
+    const defaultValues = {
+      "id": "",
+      "comment": "",
+      "division_code": "",
+      "sample": false,
+    }
+    const { control, handleSubmit, reset, setValue, getValues, errors, formState } = useForm({
+      reValidateMode : 'onBlur',
+      defaultValues,
+      });
+    const onSubmit = data => {
+      console.log(`onSubmit data = ${data}`);
+      /*return isAddMode
+          ? createOrder(data)
+          : updateOrder(id, data);*/
+    }
+    /*function createOrder(data) {
+      return orderService.create(data, token)
+          .then(() => {
+              alertService.success('User added', { keepAfterRouteChange: true });
+              history.push('.');
+          })
+          .catch(alertService.error);
+    }
+    function getValue(key, prop) {
+      return order[key][prop]
+    }
+    useEffect(() => {
+      //console.log(`OrderDialog isAddMode, !isObjectEmpty(order) = ${isAddMode}, ${!isObjectEmpty(order)}`)
+      const fields = ['id', 'comment', 'details', "customer_id",
+      'division_code', 'division_name', 
+      "user_id", "user_name",
+      "sample", "date"];
+      if (!isAddMode & !isObjectEmpty(order)) {
+        
+            fields.forEach((field) => setValue(field, order[field]));
+            setOrder(order);
+            fields.forEach((field) => console.log(`!isAddMode field, ${getValues(order[field])}`));
+        };
+        if (isAddMode & !isObjectEmpty(order)) {
+          fields.forEach((field) => console.log(`***** isAddMode field, ${(field)}`));
+      };
+    }, [order]);
+
+    /*
+    if (!isObjectEmpty(extOpen) && extOpen === true) setOpen(true);
+    console.log(`OrderDialog extOpen = ${extOpen}`)*/
+
     return (
       <div>
         {divisions && (<IconButton color="primary" sx={{ p: '10px' }} aria-label="orderAdd" onClick={handleOpen} title="Cоздать заказ">
@@ -109,13 +148,13 @@ const style = {
                 <Typography noWrap>{customer}</Typography>
               </Grid>
               <Grid item xs={12}>
-                <Typography noWrap>{order}</Typography>
+                <Typography noWrap>{orderTitle}</Typography>
               </Grid>
               {comments && (<Grid item xs={12}>
                 <Controller
                   control={control}
                   name="comment"
-                  defaultValue={comments[0]}
+
                   rules={{required : true,}}
                   render={({ field: { ref, onChange, ...field },
                     fieldState: { error } }) => (
@@ -130,7 +169,7 @@ const style = {
                           fullWidth
                           inputRef={ref}
                           variant="filled"
-                          label="Заказ создан: "
+                          label="Филиал: "
                           error = {error !== undefined}
                           helperText = { error ? inputHelper.box[error.type] : ""}
                         />
@@ -143,7 +182,7 @@ const style = {
                   <Controller
                   control={control}
                   name="division_code"
-                  defaultValue={ [ divisions[0] ] }
+
                   rules={{required : true,}}
                   render={({ field: { ref, onChange, ...field },
                     fieldState: { error } }) => (
@@ -159,7 +198,7 @@ const style = {
                               fullWidth
                               inputRef={ref}
                               variant="filled"
-                              label="Подразделение"
+                              label="Подразделение: "
                               error = {error !== undefined}
                               helperText = { error ? inputHelper.box[error.type] : ""}
                               />

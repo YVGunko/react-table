@@ -11,8 +11,8 @@ async function create(data, token) {
     await api("/customers", 'POST', token, 
     {   id: data.id,
         name: data.name,
-        email: customer.email,
-        phone: customer.phone, } )
+        email: data.email,
+        phone: data.phone, } )
    .then((resp) => {
      console.log(`handleSubmitCustomer Ok: ${JSON.stringify(resp)}`);
     //setSubmitting(false);
@@ -26,7 +26,7 @@ async function create(data, token) {
  }
 
 function update(id, params) {
-    return fetchWrapper.put(`${baseUrl}/${id}`, params);
+    //return fetchWrapper.put(`${baseUrl}/${id}`, params);
 }
 export async function submitCustomer ( customer, token ) {
     //setSubmitting(true);
