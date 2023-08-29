@@ -8,11 +8,13 @@ export const orderService = {
     //delete: _delete
 };
 async function create(data, token) {
-    await api("/customers", 'POST', token, 
-    {   id: data.id,
-        name: data.name,
-        email: data.email,
-        phone: data.phone, } )
+    await api("/orders", 'POST', token, 
+    {   id: "",
+        comment: data.comment,
+        user_id: token.id,
+        customer_id: data.customer_id,
+        division_code: data.division_code, 
+        sample: data.sample,} )
    .then((resp) => {
      console.log(`handleSubmitCustomer Ok: ${JSON.stringify(resp)}`);
     //setSubmitting(false);

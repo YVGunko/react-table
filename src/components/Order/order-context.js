@@ -15,6 +15,7 @@ import IconButton from '@mui/material/IconButton';
 import useOrder from './useOrder';
 import {CustomerContext} from '../Customer/CustomerCrud';
 import OrderDialog from './OrderDialog';
+import { ModalButton } from './Modal';
 import { isObjectEmpty } from "../../utils/utils";
 import CustomerDialog from "../Customer/CustomerDialog";
 
@@ -56,11 +57,15 @@ export const  OrderContext = React.createContext();
             width: 40,
             headerName: "",
             sortable: false,
-            renderCell: ({ row }) =>
-              <IconButton onClick={(event) => openOrderDialog(event, row)} variant="outlined" color="primary" size="small">
-                <AddCardOutlinedIcon />
-              </IconButton >,
+            disableClickEventBubbling: true,
+            renderCell: ({ row }) => { 
+              return (
+                <>
+                  <ModalButton order = {row}/>
+                </>
+            );
           },
+        },
           { field: "send",
           width: 40,
           headerName: "",
@@ -79,7 +84,12 @@ export const  OrderContext = React.createContext();
     };
     function sendOrderByEmail (event, row) {
         event.stopPropagation();
-        return alert(JSON.stringify(row, null, 4));
+        return (
+          <>
+            <ModalButton order = {row}/>
+          </>
+        )
+        //return alert(JSON.stringify(row, null, 4));
     }
     function openOrderDialog (event, row) {
       event.stopPropagation();
@@ -134,9 +144,9 @@ export const  OrderContext = React.createContext();
     const [rowSelectionModel, setRowSelectionModel] = React.useState([]);
     const onRowsSelectionHandler = useMemo(() =>(ids) => {
       let selOrderData = ids.map((id) => data.data.orders.find((row) => row.id === id)) ;
-      console.log(`rowSelectionModel ${JSON.stringify(selOrderData)}`);
+      console.log(`rowSelectionModel ${JSON.stringify(selOrderData[0])}`);
       setRowSelectionModel(selOrderData[0]);
-      setSelectedOrderData(selOrderData[0]);
+      //setSelectedOrderData(selOrderData[0]);
         //customerHasChanged(selectedRowsData[0]);
       }, [ data.data.orders]);
 
@@ -172,7 +182,7 @@ const OrderBox = () => {
     const [paginationModel, setPaginationModel] = React.useState({ page: 0, pageSize: 5, });
     const [selectedOrderData, setSelectedOrderData] = React.useState({});
     const data = useOrder(paginationModel).fetchedData ;
-    if (data) { console.log(`OrderBox  useOrder().fetchedData currentPage ${JSON.stringify(data.orders).substring(1,10)}`); }
+    if (data) { console.log(`OrderBox  useOrder().fetchedData currentPage ${JSON.stringify(data.orders).substring(1,50)}`); }
     return (       
         <OrderContext.Provider 
           value = { { paginationModel, setPaginationModel, 

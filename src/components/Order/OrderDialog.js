@@ -18,6 +18,8 @@ import {
     Typography
   } from "@mui/material";
 
+  import * as Yup from 'yup';
+
 import CloseIcon from '@mui/icons-material/Close';
 import AddCardOutlinedIcon from '@mui/icons-material/AddCardOutlined';
 import { teal, grey } from "@mui/material/colors";
@@ -43,11 +45,20 @@ const style = {
     pb: 3,
   };
 
-  export default function OrderDialog( inputedOrder, extOpen ) {
-    const [open, setOpen] = React.useState(extOpen ? extOpen : false);
+  export default function OrderDialog( props ) {
+    const {inputedOrder, extOpen } = props;
+    const [open, setOpen] = React.useState({extOpen} ? {extOpen} : false);
     const [order, setOrder] = React.useState(inputedOrder ? inputedOrder : {});
-    console.log(`OrderDialog order = ${JSON.stringify(order)}, extOpen = ${extOpen}`)
+    console.log(`OrderDialog order = ${JSON.stringify(order)}, extOpen = ${{extOpen}}`)
     const isAddMode = isObjectEmpty(order);
+
+    // form validation rules 
+    const validationSchema = Yup.object().shape({
+      comment: Yup.string()
+          .required('Филиал необходимо выбрать'),
+      division_code: Yup.string()
+          .required('Подразделение необходимо выбрать'),
+    });
 
     const handleOpen = () => {
       setOpen(true);
@@ -59,7 +70,8 @@ const style = {
     const divisions = useDivision().fetchedData;
     const comments = useComment().comments;
     const {selectedCustomer} = useContext(CustomerContext);
-    //const {selectedOrderData, setSelectedOrderData} = useContext(OrderContext);
+    const curDate = new Date().toLocaleString();
+    const {selectedOrderData, setSelectedOrderData} = useContext(OrderContext);
     const customer = `Клиент : ${selectedCustomer ? selectedCustomer.name : "Не выбран"}`;
     
     //console.log(`OrderDialog order = ${JSON.stringify(order)}`)
@@ -95,25 +107,33 @@ const style = {
       "sample": false,
     }
     const { control, handleSubmit, reset, setValue, getValues, errors, formState } = useForm({
-      reValidateMode : 'onBlur',
-      defaultValues,
+
       });
     const onSubmit = data => {
-      console.log(`onSubmit data = ${data}`);
-      /*return isAddMode
+      data.customer_id = selectedCustomer.id;
+      return isAddMode
           ? createOrder(data)
-          : updateOrder(id, data);*/
+          : updateOrder(data);
     }
-    /*function createOrder(data) {
+    function createOrder(data) {
       return orderService.create(data, token)
           .then(() => {
-              alertService.success('User added', { keepAfterRouteChange: true });
-              history.push('.');
+              setSelectedOrderData (data);
+              console.log(`orderService.create = ${JSON.stringify(data)}`)
           })
-          .catch(alertService.error);
+          .catch((error) => {
+            alert("Ошибка при сохранении нового заказа");
+          });
     }
-    function getValue(key, prop) {
-      return order[key][prop]
+    //TODO
+    function updateOrder(data) {
+      return orderService.update(data, token)
+          .then(() => {
+            setSelectedOrderData (data);
+          })
+          .catch((error) => {
+            alert("Ошибка при сохранении нового заказа");
+          });
     }
     useEffect(() => {
       //console.log(`OrderDialog isAddMode, !isObjectEmpty(order) = ${isAddMode}, ${!isObjectEmpty(order)}`)
@@ -121,20 +141,13 @@ const style = {
       'division_code', 'division_name', 
       "user_id", "user_name",
       "sample", "date"];
-      if (!isAddMode & !isObjectEmpty(order)) {
-        
+      if (!isAddMode & !isObjectEmpty(order)) {       
             fields.forEach((field) => setValue(field, order[field]));
             setOrder(order);
-            fields.forEach((field) => console.log(`!isAddMode field, ${getValues(order[field])}`));
         };
-        if (isAddMode & !isObjectEmpty(order)) {
-          fields.forEach((field) => console.log(`***** isAddMode field, ${(field)}`));
-      };
-    }, [order]);
+    }, []);
 
-    /*
-    if (!isObjectEmpty(extOpen) && extOpen === true) setOpen(true);
-    console.log(`OrderDialog extOpen = ${extOpen}`)*/
+
 
     return (
       <div>
@@ -142,7 +155,8 @@ const style = {
                 <AddCardOutlinedIcon />
         </IconButton>)}
         <Modal open={open} onClose={handleClose} >
-          <Box sx={{ ...style, width: 400 }} component="form" onSubmit={handleSubmit(onSubmit)}>
+          <Box sx={{ ...style, width: 400 }} component="form" onSubmit={handleSubmit(onSubmit)} onReset={reset}>
+            <h1>{isAddMode ? 'Новый заказа' : 'Изменение заказа'}</h1>
             <Grid container spacing={6}>
               <Grid item xs={12}>
                 <Typography noWrap>{customer}</Typography>
@@ -178,18 +192,19 @@ const style = {
                   )}
                 />
                 </Grid>)}
-              {divisions && (<Grid item xs={12}>
+
+                {divisions && (<Grid item xs={12}>
                   <Controller
                   control={control}
                   name="division_code"
 
-                  rules={{required : true,}}
+                  rules={{required : 'true,'}}
                   render={({ field: { ref, onChange, ...field },
                     fieldState: { error } }) => (
                       <Autocomplete
                           options={divisions}
                           getOptionLabel={(divisions) => divisions.division_name}
-                          
+
                           onChange={(_, data) => onChange(data.division_code)}
                           renderInput={(params) => (
                               <TextField
