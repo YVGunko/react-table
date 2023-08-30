@@ -16,13 +16,13 @@ async function create(data, token) {
         division_code: data.division_code, 
         sample: data.sample,} )
    .then((resp) => {
-     console.log(`handleSubmitCustomer Ok: ${JSON.stringify(resp)}`);
+     console.log(`handleSubmit orderService Ok: ${JSON.stringify(resp)}`);
     //setSubmitting(false);
     return resp;
   })
   .catch((error) => {
      //setSubmitting(false);
-     console.log(`handleSubmitCustomer error: ${JSON.stringify(error)}`);
+     console.log(`handleSubmit orderService error: ${JSON.stringify(error)}`);
      return error;
   });
  }
