@@ -181,8 +181,9 @@ const OrderBox = () => {
     const {selectedCustomer} = useContext(CustomerContext);
     const [paginationModel, setPaginationModel] = React.useState({ page: 0, pageSize: 5, });
     const [selectedOrderData, setSelectedOrderData] = React.useState({});
+    console.log(`OrderBox start. ${selectedCustomer.id}, ${paginationModel.page}, ${JSON.stringify(selectedOrderData).substring(1,50)}`);
     const data = useOrder(paginationModel).fetchedData ;
-    if (data) { console.log(`OrderBox  useOrder().fetchedData currentPage ${JSON.stringify(data.orders).substring(1,50)}`); }
+    if (data) { console.log(`OrderBox useOrder().fetchedData currentPage ${JSON.stringify(data.orders).substring(1,50)}`); }
     return (       
         <OrderContext.Provider 
           value = { { paginationModel, setPaginationModel, 

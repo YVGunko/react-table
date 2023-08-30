@@ -7,6 +7,7 @@ import {
     Checkbox,
     Dialog,
     FormControlLabel,
+    FormLabel,
     Grid,
     Icon,
     IconButton, 
@@ -111,6 +112,7 @@ const style = {
       });
     const onSubmit = data => {
       data.customer_id = selectedCustomer.id;
+      console.log(`OrderDialog onSubmit = ${JSON.stringify(data)}`)
       return isAddMode
           ? createOrder(data)
           : updateOrder(data);
@@ -119,7 +121,7 @@ const style = {
       return orderService.create(data, token)
           .then(() => {
               setSelectedOrderData (data);
-              console.log(`orderService.create = ${JSON.stringify(data)}`)
+              console.log(`OrderDialog createOrder = ${JSON.stringify(data)}`)
           })
           .catch((error) => {
             alert("Ошибка при сохранении нового заказа");
@@ -163,6 +165,47 @@ const style = {
               </Grid>
               <Grid item xs={12}>
                 <Typography noWrap>{orderTitle}</Typography>
+              </Grid>
+              <Grid item xs={12}>
+                <Controller
+                  control={control}
+                  name="id"
+                  render={({ field: { ref, onChange, ...field },
+                    fieldState: { error } }) => (
+
+                        <FormLabel
+                          {...field}
+                          fullWidth
+                          inputRef={ref}
+                          variant="filled"
+                          label="Номер заказа: "
+                          defaultValue="Новый"
+                          onChange={(_, data) => onChange(data)}
+                          error = {error !== undefined}
+                        />
+                      )}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <Controller
+                  control={control}
+                  name="date"
+                  render={({ field: { ref, onChange, ...field },
+                    fieldState: { error } }) => (
+
+                        <TextField
+                          {...field}
+                          fullWidth
+                          inputRef={ref}
+                          variant="filled"
+                          label="Дата заказа: "
+                          defaultValue="Сегодня"
+                          disabled="true"
+                          onChange={(_, data) => onChange(data)}
+                          error = {error !== undefined}
+                        />
+                      )}
+                />
               </Grid>
               {comments && (<Grid item xs={12}>
                 <Controller

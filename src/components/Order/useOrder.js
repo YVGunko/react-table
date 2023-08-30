@@ -15,13 +15,13 @@ export default function useOrder( paginationModel ) {
     let id = selectedCustomer ? selectedCustomer.id : 0;
 
     const fetchData = useCallback(async () => {
-        console.log(`useOrder()  fetchData ${id}, paginationModel=${paginationModel ? paginationModel.page : 0}`);
     return api(`${orderURL}${id}&page=${paginationModel ? paginationModel.page : 0}&size=${paginationModel ? paginationModel.pageSize : 5}`, 'GET', token)
     .then(fetchedData => {
         setFetchedData(fetchedData);
+        console.log(`useOrder() fetchedData ${JSON.stringify(fetchedData.orders).substring(1,50)}`);
     })
     .catch((error) => {
-      console.log(`useOrder()  fetchData ${JSON.stringify(error)}`);
+      console.log(`useOrder() fetchedData ${JSON.stringify(error)}`);
       return(error);
       })
 
